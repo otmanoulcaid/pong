@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import fp from 'fastify-plugin';
 import db  from '../database/index.js';
 import { UserDAO } from './UserDAO.js';

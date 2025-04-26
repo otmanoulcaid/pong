@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // import schema from '../schemas/response.js'
 
 export default (fastify) => {

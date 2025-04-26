@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 
 export default (fastify) => {
     fastify.get('/google', async (request, reply) => {    

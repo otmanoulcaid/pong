@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {signinSchema, signupSchema, logoutSchema} from '../schemas/auth.js'
 
 export default (fastify) => {

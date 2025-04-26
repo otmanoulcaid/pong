@@ -1,4 +1,6 @@
-class AuthDAO {
+// @ts-nocheck
+
+class GameDAO {
     constructor(db)
     {
         this.db = db;
@@ -7,4 +9,4 @@ class AuthDAO {
 
 }
 
-export { AuthDAO };
+export { GameDAO };

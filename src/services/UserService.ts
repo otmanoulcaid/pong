@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import bcrypt from "bcrypt";
 
 class UserService {

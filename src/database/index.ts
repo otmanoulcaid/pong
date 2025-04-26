@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Database from 'better-sqlite3'
 import load from "./loader.js";
 

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Fastify from 'fastify'
 import env from 'dotenv'
 

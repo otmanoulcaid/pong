@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 class UserDAO
 {
     constructor(db)

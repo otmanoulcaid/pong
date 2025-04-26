@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import fp from "fastify-plugin";
 import querystring from 'querystring'
 

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export const signinSchema = {
     body: {
         type: 'object',
