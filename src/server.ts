@@ -18,7 +18,7 @@ class Server {
          * dao layer used by service leyer which is used by the controller
          */
         
-          
+        this.fastify.register(await import('@fastify/websocket'));
         this.fastify.register(await import('./dao/index.js'));
         this.fastify.register(await import('./services/index.js'));
         this.fastify.register(await import('./controller/index.js'));

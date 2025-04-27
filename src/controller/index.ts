@@ -15,7 +15,7 @@ export default async (fastify) => {
 	/**
 	 * middlewares
 	 */
-	// fastify.register(await import('./hooks/middleware.js'));
+	fastify.register(await import('./hooks/middleware.js'));
 	fastify.register(await import('./hooks/cors-hook.js'));
 	fastify.register(await import('./schemas/bad-schema.js'));
 
@@ -23,8 +23,9 @@ export default async (fastify) => {
 	 * routes
 	 */
 	fastify.register(await import('./routes/user.js'), { prefix: '/api/user' });
-	// fastify.register(await import('./routes/auth.js'), {prefix: '/api/auth'});
+	fastify.register(await import('./routes/auth.js'), { prefix: '/api/auth' });
 	fastify.register(await import('./routes/oauth.js'), { prefix: '/api/oauth' });
 	fastify.register(await import('./routes/friend.js'), { prefix: '/api/friend' });
 	fastify.register(await import('./routes/chat.js'), { prefix: '/api/chat' });
+	fastify.register(await import('./routes/game.js'), { prefix: '/api/game' });
 };
