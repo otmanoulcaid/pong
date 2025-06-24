@@ -1,5 +1,12 @@
 
 
+export const addUser = async (request, reply) => {
+    let response = await request.fastify.userService.addUser(request.body)
+    if (response.stat)
+        return reply.code(201).send({ user:  request.body });
+    return reply.code(400).send({ error: response.message });
+}
+
 export const updateUser = async (request, reply) => {
     let response = await request.fastify.userService.updateUser(request.body)
     if (response.stat)
@@ -35,7 +42,8 @@ export const graphqlUser = async (request, reply) => {
     return reply.code(400).send({ error: response.message });
 }
 
-export const userExist = async (request, reply) => {
-    const response = await request.fastify.userService.userExist(request.params.username);
+export const userExist = async (request, reply) =>
+{
+    const response = await request.fastify.userService.getUser(request.params.username, 'username', 'email');
     return reply.send({ response });
 }

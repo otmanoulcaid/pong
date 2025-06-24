@@ -76,12 +76,6 @@ class UserService {
             return error;
         }
     }
-    
-    async userExist( username )
-    {
-        const user = await this.userRepository.userExist({ username });   
-        return user != undefined;
-    }
 }
 
 export { UserService };

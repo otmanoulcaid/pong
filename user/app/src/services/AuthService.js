@@ -51,7 +51,7 @@ class AuthService
     }
 
     async canSignUp(body)
-    {     
+    {
         try {
             const serviceResult = await this.userService.getUser(body.username);
             if (!serviceResult.user)
