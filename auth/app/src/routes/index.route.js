@@ -7,15 +7,14 @@ export default (fastify) => {
 
     const authController = new AuthController(fastify.authService);
     const oauthController = new OAuthController(fastify.authService);
+    
+    fastify.post('/signin', authController.signin);
+    
+    fastify.post('/signup', authController.signup)
+    
+    fastify.post('/logout', authController.logout);
 
     fastify.post('/refresh', authController.refreshToken);
-
-    fastify.get('/signin', authController.signin);
-    // fastify.post('/signin', authController.signin);
-
-    fastify.post('/signup', authController.signup)
-
-    fastify.post('/logout', authController.logout);
 
     fastify.post('/password/get-otp', authController.getOtp);
 

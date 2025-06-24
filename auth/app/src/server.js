@@ -13,7 +13,7 @@ class Server
     registerPlugins()
     {
         this.fastify.decorate('authService', new AuthService(new UserService()));  
-        this.fastify.register(import('./routes/index.route.js'), { prefix: '/auth' });
+        this.fastify.register(import('./routes/index.route.js'), { prefix: '/api/auth' });
     }
 
     listen()
@@ -26,7 +26,7 @@ class Server
 
     async start()
     {
-        env.config({ path: './.env' });
+        env.config({ path: '../.env' });
 
         this.registerPlugins();
         // await this.fastify.ready();
