@@ -31,7 +31,12 @@ class UserRepository
     async updateUser(field, user)
     {
         return await this.#db.update('user', user, field)
-    }    
+    }
+
+    async userExist( user )
+    {
+        return await this.#db.getOne('user', user, [ 'username' ])
+    }
 }
 
 export { UserRepository };

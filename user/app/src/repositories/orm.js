@@ -42,7 +42,6 @@ class ORM {
         }
         statement = `SELECT ${selected} FROM ${table}`;
         return await this.#db.all(statement);
-
     }
 
     async update(table, dataObject, creteriaObject)

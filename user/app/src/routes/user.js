@@ -11,6 +11,8 @@ export default (fastify) => {
     fastify.post('/update', userController.updateUser);
 
     fastify.get('/', userController.getUsers);
+
+    fastify.get('/:username', userController.userExist);
     
     fastify.post('/filter',userController.filterUser);
     

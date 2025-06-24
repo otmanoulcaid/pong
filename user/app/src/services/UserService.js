@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 
 class UserService {
-    constructor(UserRepository)
+    constructor(userRepository)
     {
-        this.UserRepository = UserRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -20,7 +20,7 @@ class UserService {
         };
         try {
             formatedUser.pass = await bcrypt.hash(user.pass || '', 10) // empty pass in case of OAuth
-            await this.UserRepository.addUser(formatedUser);
+            await this.userRepository.addUser(formatedUser);
             return { stat: true };
         } catch (error) {
             error.stat = false;
@@ -31,10 +31,10 @@ class UserService {
     async updateUser(body)
     {
         try {
-            const user = await this.UserRepository.getUser(body.filter);
+            const user = await this.userRepository.getUser(body.filter);
             if (!user)
                 throw new  Error("user not exist");
-            await this.UserRepository.updateUser( body.filter, body.data);
+            await this.userRepository.updateUser( body.filter, body.data);
             return { stat: true };           
         }
         catch (error) {
@@ -46,7 +46,7 @@ class UserService {
     async deleteUser(user)
     {
         try {
-            await this.UserRepository.deleteUser(user);
+            await this.userRepository.deleteUser(user);
             return { stat: true };
         } catch (error) {
             error.stat = false;
@@ -57,7 +57,7 @@ class UserService {
     async getUser(username, ...fetchedFields)
     {
         try {
-            const user = await this.UserRepository.getUser({ username }, fetchedFields);
+            const user = await this.userRepository.getUser({ username }, fetchedFields);
             return { stat: true, user };
         } catch (error) {
             error.stat = false;
@@ -69,12 +69,18 @@ class UserService {
     {
         // return {stat: true, data: fetchedFields};        
         try {
-            const users = await this.UserRepository.getUsers(criteria, fetchedFields);
+            const users = await this.userRepository.getUsers(criteria, fetchedFields);
             return { stat: true, users };
         } catch (error) {
             error.stat = false;
             return error;
         }
+    }
+    
+    async userExist( username )
+    {
+        const user = await this.userRepository.userExist({ username });   
+        return user != undefined;
     }
 }
 

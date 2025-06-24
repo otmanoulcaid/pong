@@ -34,3 +34,8 @@ export const graphqlUser = async (request, reply) => {
         return reply.send({ data: response.users });
     return reply.code(400).send({ error: response.message });
 }
+
+export const userExist = async (request, reply) => {
+    const response = await request.fastify.userService.userExist(request.params.username);
+    return reply.send({ response });
+}
