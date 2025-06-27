@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer';
 
@@ -9,9 +8,15 @@ class AuthService
         this.userService = userService;
     }
 
-    async signIn({ username })
+    async signIn({ username }, ...fields)
     {
-        return this.userService.userExist(username);
+        try {
+            const { data } = await this.userService.getUser(username, ...fields);
+            return {stat: true, data};
+        } catch (error) {
+            error.stat = false;
+            return error
+        }
     }
 
     async signUp( paylod )
@@ -19,7 +24,10 @@ class AuthService
         try {
             const response = await this.userService.createUser(paylod);
             if (response.user)
-                return { stat: true };
+            {
+                const { username, email} = response.user
+                return { stat: true, user: { username, email } };
+            }
             throw new Error('username or email already used');
         }
         catch ( error ) {

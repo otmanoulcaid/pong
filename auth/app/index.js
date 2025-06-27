@@ -7,8 +7,8 @@ function main() {
         }
     }
 
-    // new Server(logger).start()
-    new Server(false).start()
+    new Server(logger).start()
+    // new Server(false).start()
     // new Server().start()
 }
 

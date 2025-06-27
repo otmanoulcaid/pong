@@ -7,10 +7,10 @@ export class AuthController
 
     async signin (request, reply)
     {
-        const { response } = await this.authService.signIn(request.body)
+        const response = await this.authService.signIn(request.body, 'username', 'email')
         if (response.stat)
-        {            
-            const token = this.authService.generateToken(request.body);            
+        {
+            const token = this.authService.generateToken(response.data);
             return reply.header('Set-Cookie', `token=${token}; Max-Age=5184000`)
                     .send({message: 'logged successfuly'});
         }
@@ -27,7 +27,7 @@ export class AuthController
         const response = await this.authService.signUp(request.body)
         if (response.stat)
         {
-            const token = this.authService.generateToken(request.body);
+            const token = this.authService.generateToken(response.user);
             return reply.header('Set-Cookie', `token=${token}; Max-Age=5184000`)
                         .send({data: "ok"});
         }

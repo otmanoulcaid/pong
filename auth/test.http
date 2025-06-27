@@ -12,10 +12,12 @@ POST http://localhost:3030/api/auth/signup
 Content-Type: application/json
 
 {
-    "username": "ali",
+    "username": "aymane",
     "password": "test",
-    "email": "test@test"
+    "email": "aymane@aymane"
 }
 
 ###
+
+
 

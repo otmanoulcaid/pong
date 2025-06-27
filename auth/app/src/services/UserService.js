@@ -1,30 +1,17 @@
 export class UserService
-{
-    async userExist(username)
+{   
+    async getUser(username, ...fields)
     {
-        return await this.getFetch(`/api/user/${username}`);
-    }
-
-    async getUser(username)
-    {
-
+        return await this.postFetch(`/api/user/filter`, {
+            filter: { username },
+            fields
+        });
     }
 
     async createUser( payload )
     {
         return await this.postFetch('/api/user/add', payload)
     }
-
-    async updateUser( payload )
-    {
-
-    }
-
-    async deleteUser()
-    {
-
-    }
-
 
     async getFetch(uri, host = 'localhost', port = 3000)
     {
