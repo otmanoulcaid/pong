@@ -34,9 +34,9 @@ class FriendRepository
         await this.db.delete('friend', friendship);
     }
     
-    async updateFriendship( friendship )
+    async updateFriendship(stat, friendship )
     {
-        await this.db.update('friend', friendship);
+        await this.db.update('friend', { stat }, friendship);
     }
 }
 

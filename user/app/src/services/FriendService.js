@@ -30,7 +30,7 @@ class FriendService
     async acceptFriend( friendship )
     {
         try {
-            await this.friendRepository.updateFriendship(friendship);
+            await this.friendRepository.updateFriendship('accepted', friendship);
             return { stat: true }
         } catch (error) {
             error.stat = false;
@@ -51,7 +51,7 @@ class FriendService
     async blockFriend( friendship )
     {
         try {
-            await this.friendRepository.updateFriendship(friendship); 
+            await this.friendRepository.updateFriendship('blocked', friendship); 
             return { stat: true }
         } catch (error) {
             error.stat = false;
