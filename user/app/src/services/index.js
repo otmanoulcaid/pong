@@ -1,9 +1,6 @@
 import fp from "fastify-plugin";
 import { UserService } from './UserService.js';
-import { AuthService } from './AuthService.js';
-// import { FriendService } from './FriendService.js';
-// import { ChatService } from './ChatService.js';
-// import { GameService } from './GameService.js';
+import { FriendService } from './FriendService.js';
 
 export default fp(async (fastify) => {
     /**
@@ -15,8 +12,7 @@ export default fp(async (fastify) => {
     
     
     fastify.decorate('userService', userService);
-    fastify.decorate('authService', new AuthService(fastify.authRepository, userService));
-    // fastify.decorate('friendService', new FriendService(fastify.FriendRepository));
+    fastify.decorate('friendService', new FriendService(fastify.friendRepository));
     // fastify.decorate('chatService', new ChatService(fastify.chatDao));
     // fastify.decorate('gameService', new GameService(fastify.gameDao));
     

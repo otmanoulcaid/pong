@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/friend/1 HTTP/1.1
+GET http://localhost:3000/api/friend/2 HTTP/1.1
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwicGFzcyI6Im90bWFuIiwiaWF0IjoxNzQ1NTYzNDg4LCJleHAiOjE3NTA3NDc0ODh9.KjB-dl5JLFbG5335oTRg0azcOfBTdVazrCOY6QblvmM
 
 ###
@@ -8,8 +8,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwic
 Content-Type: application/json
 
 {
-    "from": "1",
-    "to": "2"
+    "u_from": "2",
+    "u_to": "3"
 }
 
 ###
@@ -19,8 +19,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwic
 Content-Type: application/json
 
 {
-    "from": "2",
-    "to": "3"
+    "u_from": "2",
+    "u_to": "3"
 }
 
 ###
@@ -30,8 +30,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwic
 Content-Type: application/json
 
 {
-    "from": "3",
-    "to": "4"
+    "u_from": "3",
+    "u_to": "4"
 }
 
 ###
@@ -41,6 +41,6 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwic
 Content-Type: application/json
 
 {
-    "from": "4",
-    "to": "1"
+    "u_from": "4",
+    "u_to": "1"
 }

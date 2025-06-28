@@ -57,6 +57,8 @@ class ORM {
         const inserted = Object.keys(dataObject).join(', ');
         const values = Object.values(dataObject).map(e => '?').join(', ');
         const statement = `INSERT INTO ${table} (${inserted}) VALUES (${values});`;        
+        console.log(dataObject);
+        console.log(statement);
         await this.#db.run(statement, Object.values(dataObject));
     }
 
@@ -67,10 +69,11 @@ class ORM {
         return await this.#db.run(query); 
     }
 
-    async all(query, dataObject)
+    async all(query, values)
     {
-        if (dataObject)
-            return await this.#db.all(query, Object.values(dataObject))
+        console.log(values);
+        if (values)
+            return await this.#db.all(query, values)
         return await this.#db.all(query); 
     }
 }

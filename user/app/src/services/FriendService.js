@@ -8,10 +8,7 @@ class FriendService
     async getFriends( uid )
     {
         try {
-            const friends = await this.friendRepository.selectAllfriends({
-                u_from: uid,
-                u_to: uid
-            })
+            const friends = await this.friendRepository.selectAllfriends(uid)
             return { stat : true, friends }
         } catch (error) {
             error.stat = false;
