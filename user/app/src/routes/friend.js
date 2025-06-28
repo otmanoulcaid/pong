@@ -2,17 +2,13 @@ import * as friendController from '../controllers/friend-controller.js'
 
 export default (fastify) =>
 {
-    /**
-     * uid: user id
-     * fid: friend id
-     * logic will be implemented later
-     */
+    fastify.get('/:uid', friendController.getFriends);
 
-    fastify.get('/add/:uid/:fid', friendController.addFriend);
+    fastify.post('/add', friendController.addFriend);
 
-    fastify.get('/accept/:uid/:fid', friendController.acceptFriend);
+    fastify.post('/accept', friendController.acceptFriend);
     
-    fastify.get('/remove/:uid/:fid', friendController.removeFriend);
+    fastify.post('/remove', friendController.removeFriend);
     
-    fastify.get('/block/:uid/:fid', friendController.blockFriend);
+    fastify.post('/block', friendController.blockFriend);
 }
