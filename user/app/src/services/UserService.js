@@ -12,14 +12,14 @@ class UserService {
      * 
      */
 
-    async addUser(user)
+    async addUser({ username, email, pass })
     {
         const formatedUser = {
-            username: user.username,
-            email: user.email,
+            username,
+            email
         };
         try {
-            formatedUser.pass = await bcrypt.hash(user.pass || '', 10) // empty pass in case of OAuth
+            formatedUser.pass = await bcrypt.hash(pass || '', 10) // empty pass in case of OAuth
             await this.userRepository.addUser(formatedUser);
             return { stat: true };
         } catch (error) {
