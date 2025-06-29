@@ -41,6 +41,6 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im90bWFuIiwic
 Content-Type: application/json
 
 {
-    "u_from": "2",
-    "u_to": "3"
+    "u_from": "1",
+    "u_to": "2"
 }

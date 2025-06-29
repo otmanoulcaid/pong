@@ -41,7 +41,8 @@ class FriendService
     async removeFriend( friendship )
     {
         try {
-            this.friendRepository.deleteFriendship(friendship)
+            this.friendRepository.deleteFriendship(friendship);
+            return { stat: true };
         } catch (error) {
             error.stat = false;
             return error;
