@@ -42,9 +42,23 @@ class GameService
         await this.tournamentRepository.insert( data );
     }
     
-    async getTournamentHistory()
+    async getTournamentsHistory()
     {
-        return await this.tournamentRepository.getAllTournaments();
+        const tournaments = await this.tournamentRepository.getAllTournaments();
+        let resultedTournament = []
+        tournaments.forEach(tournament => {
+            let name = tournament.name;
+            delete tournament.name;
+            const element = resultedTournament.find(resulted => resulted.name == name)
+            if (element)
+                element.players.push(tournament);
+            else
+                resultedTournament.push({
+                    name,
+                    players: [ tournament ]
+                })
+        });
+        return resultedTournament;
     }
     
     async newPlayerEntry( data )

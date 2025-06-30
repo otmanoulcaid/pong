@@ -10,9 +10,11 @@ CREATE TABLE IF NOT EXISTS Tournament (
 
 CREATE TABLE IF NOT EXISTS Players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userid INTEGER NOT NULL,
     tournament_id INTEGER NOT NULL,
-    level TEXT,
+    level DECIMAL DEFAULT 0.0,
     FOREIGN KEY (tournament_id) REFERENCES Tournament(id) ON DELETE CASCADE
+    FOREIGN KEY (userid) REFERENCES user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Games (
@@ -29,10 +31,10 @@ INSERT INTO Tournament (date, name) VALUES
 ('2025-07-01', 'tappiya'),
 ('2025-08-15', 'billiard');
 
-INSERT INTO Players (tournament_id, level) VALUES 
-(1, 'intermediate'),
-(1, 'advanced'),
-(2, 'beginner');
+INSERT INTO Players (userid, tournament_id, level) VALUES 
+(1, 1, 10.0),
+(2, 1, 12.5),
+(3, 2, 11.90);
 
 INSERT INTO Games (userid, opponent, won, date) VALUES
 (1, 'salam', 1, '2025-07-03'),

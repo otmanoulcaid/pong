@@ -13,11 +13,14 @@ class TournamentRepository
     async getAllTournaments()
     {
         const query = `
-            select * from tournament t
-            join players p
-            on p.tournament_id = t.id
+            SELECT 
+                t.name,
+                u.username AS player,
+                p.level
+            FROM tournament t
+            JOIN players p ON p.tournament_id = t.id
+            JOIN user u ON u.id = p.id
         `;
-
         return await this.db.all(query);
     }
 }
