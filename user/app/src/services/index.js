@@ -13,7 +13,13 @@ export default fp(async (fastify) => {
     
     fastify.decorate('userService', userService);
     fastify.decorate('friendService', new FriendService(fastify.friendRepository));
+    fastify.decorate('gameService', new GameService(fastify.gameRepository));
+    fastify.decorate('playerService', new FriendService(fastify.friendRepository));
+    fastify.decorate('gameService', new GameService(
+        fastify.gameRepository,
+        fastify.tournamentRepository,
+        fastify.playerRepository
+    ));
     // fastify.decorate('chatService', new ChatService(fastify.chatDao));
-    // fastify.decorate('gameService', new GameService(fastify.gameDao));
-    
+
 });

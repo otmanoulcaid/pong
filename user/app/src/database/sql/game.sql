@@ -1,0 +1,21 @@
+CREATE TABLE Tournament (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE Players (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tournament_id INTEGER NOT NULL,
+    level TEXT,
+    FOREIGN KEY (tournament_id) REFERENCES Tournament(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Games (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userid INTEGER NOT NULL,
+    opponent TEXT NOT NULL,
+    won BOOLEAN NOT NULL,
+    date TEXT NOT NULL,
+    FOREIGN KEY (userid) REFERENCES user(id) ON DELETE CASCADE
+);
