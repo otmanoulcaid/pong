@@ -20,29 +20,36 @@ class GameService
     async getNumberOfGamesWon( username )
     {
         const games = await this.gameRepository.getGamesByUsername( username );
-        return games.filter(e => e.won)
+        const wonGames = games.filter(e => e.won);
+        return wonGames.length;
     }
     
     async getNumberOfGamesLost( username )
     {
         const games = await this.gameRepository.getGamesByUsername( username );
-        return games.filter(e => !e.won)
+        const lostGames = games.filter(e => e.won);
+        return lostGames.length;
     }
-    
+
     async getTotalNumberOfGames( username )
     {
         const games = await this.gameRepository.getGamesByUsername( username );
         return games.length;
     }
 
-    newTournamentEntry( data )
+    async newTournamentEntry( data )
     {
-        this.tournamentRepository.insert( data );
+        await this.tournamentRepository.insert( data );
     }
     
-    newPlayerEntry( data )
+    async getTournamentHistory()
     {
-        this.playerRepository.insert( data );
+        await this.tournamentRepository.getAllTournaments();
+    }
+    
+    async newPlayerEntry( data )
+    {
+        await this.playerRepository.insert( data );
     }
 }
 
