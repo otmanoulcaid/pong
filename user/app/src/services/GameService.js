@@ -44,7 +44,7 @@ class GameService
     
     async getTournamentHistory()
     {
-        await this.tournamentRepository.getAllTournaments();
+        return await this.tournamentRepository.getAllTournaments();
     }
     
     async newPlayerEntry( data )

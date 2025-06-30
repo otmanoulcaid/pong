@@ -14,7 +14,7 @@ class TournamentRepository
     {
         const query = `
             select * from tournament t
-            join player p
+            join players p
             on p.tournament_id = t.id
         `;
 

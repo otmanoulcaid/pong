@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS friend;
+
 CREATE TABLE IF NOT EXISTS friend (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     u_from INTEGER NOT NULL,
@@ -10,8 +12,6 @@ CREATE TABLE IF NOT EXISTS friend (
     FOREIGN KEY (u_from) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (u_to) REFERENCES user(id) ON DELETE CASCADE
 );
-
-DELETE from friend;
 
 --mock data
 
