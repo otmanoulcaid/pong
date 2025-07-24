@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+    networks:
+      - trance
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    env_file:
+      - .env
+
+  redis:
+    image: redis
+    container_name: redis
+    env_file:
+      - .env
+    networks:
+      - trance
+
+
+  gateway:
+    build: gateway
+    image: gateway:1.0
+    container_name: gateway
+    ports:
+      - 3000:3000
+    networks:
+      - trance
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  auth:
+    build: auth
+    image: auth:1.0
+    container_name: auth
+    networks:
+      - trance
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .env
+
+  chat:
+    build: chat
+    image: chat:1.0
+    container_name: chat
+    networks:
+      - trance
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  game:
+    build: game
+    image: game:1.0
+    container_name: game
+    networks:
+      - trance
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  user:
+    build: user
+    image: user:1.0
+    container_name: user
+    networks:
+      - trance
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+networks:
+  trance:
+    name: trance
+    driver: bridge
