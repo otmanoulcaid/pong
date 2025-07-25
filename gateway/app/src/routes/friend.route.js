@@ -5,7 +5,7 @@ export const friend = async (fastify) => {
 
     const forward = (request, reply) => {
         try {
-            reply.from(`http://${config.servers.CHAT}${request.url}`, {
+            reply.from(`${config.servers.CHAT}${request.url}`, {
                 headers: {
                     'X-Request-Origin': fastify.internalToken('gateway'),
                 },

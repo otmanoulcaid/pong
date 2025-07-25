@@ -3,7 +3,7 @@ import { config } from "../config/env.config.js";
 export const game = async (fastify) => {
     const forward = (request, reply) => {
         try {
-            reply.from(`http://${config.servers.GAME}${request.url}`, {
+            reply.from(`${config.servers.GAME}${request.url}`, {
                 headers: {
                     'X-Request-Origin': fastify.internalToken('game'),
                 },
