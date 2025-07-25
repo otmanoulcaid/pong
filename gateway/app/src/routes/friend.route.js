@@ -17,9 +17,9 @@ export const friend = async (fastify) => {
     }
 
     fastify.get('/', forward);
-    fastify.get('/add', forward);
-    fastify.get('/accept', forward);
-    fastify.get('/block', forward);
-    fastify.get('/remove', forward);
+    fastify.post('/add', forward);
+    fastify.post('/accept', forward);
+    fastify.post('/block', forward);
+    fastify.post('/remove', forward);
     fastify.get('/ping', forward);
 }
