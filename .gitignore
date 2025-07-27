@@ -1,5 +1,3 @@
-pong.subject.pdf
-**/node_modules
-modules.md
 **/.env
-**/TODO
+**/node_modules/
+**/.vscode/
