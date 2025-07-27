@@ -13,15 +13,14 @@ class GoogleAuthService
     {
         const {token} = await this.fastify.googleOauth2.getAccessTokenFromAuthorizationCodeFlow (req);
         const userInfo = await this.fastify.googleOauth2.userinfo (token);
-        const username = generateUserName (userInfo.given_name, userInfo.family_name, this.fastify);
-        let user = this.userRepo.findUserByUsername(username);
-    
-        if (!user?.from_google)
+        let user = this.userRepo.findUserByEmail(userInfo.email);
+        
+        if (!user)
         {
+            const username = await generateUserName (userInfo.given_name, userInfo.family_name, this.fastify);
             this.userRepo.createUser (userInfo.email, username, "");
             this.userRepo.setAvatarurl(username, userInfo.picture);
             this.userRepo.verifyUser(username);
-            this.userRepo.verifyUserFromGoogle (username);
             user = this.userRepo.findUserByUsername(username);
         }
         const tokenAccess = await generateUserToken (this.fastify, user, '15m');

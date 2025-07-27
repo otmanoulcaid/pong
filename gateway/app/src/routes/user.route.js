@@ -24,4 +24,7 @@ export const user = async (fastify) => {
         onRequest: [fastify.authenticate]
     }
     , userController.updataPassword.bind (userController));
+
+    // fastify.post('/reset-password', { schema: schemas.resetPasswordSchema }, forward);
+    // fastify.post('/complete-profile/:username', { schema: schemas.complitProfileSchema }, forward);
 }

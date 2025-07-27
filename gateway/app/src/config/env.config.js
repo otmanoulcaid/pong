@@ -1,11 +1,4 @@
-
-// import doenv from 'dotenv';
-
-// doenv.config();
-
 export const config = {
-    host: process.env.HOST || '0.0.0.0',
-    port: process.env.PORT_GATEWAY || 3000,
     JWT_SECRET : process.env.JWT_SECRET || 'no_secret_for_dev',
     servers :
     {

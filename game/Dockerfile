@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22.15-slim
 
 WORKDIR /app
 
@@ -6,4 +6,4 @@ COPY app/ .
 
 RUN npm i
 
-ENTRYPOINT [ "npm", "start" ]
+CMD [ "npm", "run",  "dev" ]

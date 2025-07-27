@@ -7,6 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url  TEXT DEFAULT 'image unavailable',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_verified BOOLEAN DEFAULT FALSE,
-    from_google BOOLEAN DEFAULT FALSE,
     bio  TEXT DEFAULT ''
 );
+

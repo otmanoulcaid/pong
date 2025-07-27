@@ -10,9 +10,6 @@ async function setupUserConsumers(fastify) {
         try 
         {
             const data = JSON.parse(msg.content.toString());
-            console.log ("=================print messsage consumer game=========================");
-            console.log (data);
-            console.log ("=================print messsage consumer game=========================");
             if (data.type === 'CREATE_USER')
                 users_db.createUser(data.username, data.avatar_url);
             else if (data.type === 'UPDATE_USERNAME')

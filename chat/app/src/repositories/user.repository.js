@@ -1,4 +1,4 @@
-export class Repository
+export class UserRepository
 {
     constructor(db)
     {
@@ -46,5 +46,18 @@ export class Repository
         const value = field[column];
         const query = `DELETE FROM users WHERE ${column} = ?`;
         return this.db.prepare(query).run(value);
+    }
+
+    setUsername(username, newusername) 
+    {
+        return this.db.prepare('UPDATE users SET username=?  WHERE username = ?').run(newusername, username);
+    }
+    setAvatarurl(username, avatarUrl) 
+    {
+        return this.db.prepare('UPDATE users SET avatar_url=?  WHERE username = ?').run(avatarUrl, username);
+    }
+    createUser(username, avatar_url) 
+    {
+        return this.db.prepare('INSERT INTO users (username, avatar_url) VALUES (?, ?)').run(username, avatar_url);
     }
 }

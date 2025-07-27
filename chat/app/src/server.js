@@ -3,8 +3,9 @@ import plugins from './plugins/index.plugin.js'
 import { friend } from './routes/friend.route.js'
 import { chat } from './routes/chat.route.js'
 import fastifyWebsocket from "@fastify/websocket";
-import { config } from './config/index.config.js';
 import printRoutes from 'fastify-print-routes';
+import { config } from './config/env.config.js';
+
 
 export class Server
 {
@@ -17,8 +18,8 @@ export class Server
     config()
     {
         this.server.register(printRoutes);
-        this.server.register(plugins);
         this.server.register(fastifyWebsocket);
+        this.server.register(plugins);
         this.server.register(friend, { prefix: '/api/v1/friends' });
         this.server.register(chat, { prefix: '/ws' });
     }

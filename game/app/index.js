@@ -5,8 +5,8 @@ import fastify  from "./src/server.js";
 fastify.listen 
 (
     {
-        port: config.port ,
-		host: config.host 
+        port: config.port,
+		host: config.host,
     },
     
     (err, address) => 
@@ -15,6 +15,6 @@ fastify.listen
                 {
             process.exit(1);
         }
-        console.log(`server is running in ${config.port}`)
+        console.log(`fastify server is running on port ${config.port}...`);
     }
 )

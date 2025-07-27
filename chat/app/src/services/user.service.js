@@ -24,13 +24,13 @@ export class UserService
     {
         const user = {
             username: data.username,
-            avatar: data.avatar
+            avatar_url: data.avatar_url
         };
         this.userRepository.insert(user);
     }
 
     async updateUser(username, data)
     {
-        await this.userRepository.update({ username }, newUser);
+        await this.userRepository.update({ username }, data);
     }
 }

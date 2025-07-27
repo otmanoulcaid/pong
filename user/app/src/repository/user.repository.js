@@ -50,10 +50,6 @@ class UserRepository
     {
         return this.db.prepare('UPDATE users SET is_verified=TRUE WHERE username=?').run(username);
     }
-    verifyUserFromGoogle (username)
-    {
-        return this.db.prepare('UPDATE users SET from_google=TRUE WHERE username=?').run(username);
-    }
 };
 
 

@@ -6,7 +6,7 @@ export default fp
 (
     async (fastify) => 
     {
-        const connection = await amqplib.connect (config.servers.RABBITMQ);
+        const connection = await amqplib.connect (config.servers.rabbitmq);
         const channel = await connection.createChannel ();
 
         fastify.decorate ('mq', 
@@ -14,9 +14,9 @@ export default fp
             connection,
             channel,
         });
-        fastify.addHook('onClose', async () => {
-            await channel.close();
-            await connection.close();
+        fastify.addHook('onClose', () => {
+            channel.close();
+            connection.close();
         })
     }
 )

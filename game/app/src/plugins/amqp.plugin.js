@@ -1,6 +1,6 @@
 import amqplib from 'amqplib'
 import fp  from 'fastify-plugin'
-import { config } from '../config/env.config.js'
+import { config } from '../config/env.config.js';
 
 export default fp
 (

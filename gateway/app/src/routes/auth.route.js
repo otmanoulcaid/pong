@@ -15,18 +15,20 @@ export const auth = async (fastify) => {
         }
     };
 
+    fastify.get('/test', forward)
+
     fastify.post('/refresh', forward);
     fastify.post('/signup', { schema: schemas.signupSchema }, forward);
     fastify.post('/login', { schema: schemas.loginSchema }, forward);
     fastify.post('/logout', forward);
 
     fastify.post('/forgot-password', { schema: schemas.emailSchema }, forward);
-    fastify.post('/reset-password', { schema: schemas.resetPasswordSchema }, forward);
-
+    
     fastify.post('/verify-user', { schema: schemas.codeSchema }, forward);
     fastify.post('/resend-code', { schema: schemas.emailSchema }, forward);
-
-    fastify.post('/complete-profile/:username', { schema: schemas.complitProfileSchema }, forward);
+    
+    // fastify.post('/reset-password', { schema: schemas.resetPasswordSchema }, forward);
+    // fastify.post('/complete-profile/:username', { schema: schemas.complitProfileSchema }, forward);
 
     fastify.get('/callback', forward);
 }

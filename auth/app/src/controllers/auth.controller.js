@@ -33,12 +33,6 @@ class AuthController
         reply.send (result);
     }
 
-    async resetPassword (req, reply)
-    {
-        const result = await this.authService.resetPassword (req.body);
-        reply.send (result);
-    }
-
     async verifyUser (req, reply)
     {
         const result = await this.authService.verifyUser (req.body);
@@ -51,17 +45,6 @@ class AuthController
         reply.send (result);
     }
 
-    async completeProfile (req, reply)
-    {
-        const bio = req.body?.bio?.value;
-        const username = req.params?.username;
-        const avatar = req.body?.avatar
-
-        if (!bio && !avatar)
-            return reply.send ({success : true, message :"nothing to update"})
-        const result = await this.authService.completeProfile (bio, avatar , username);
-        reply.send (result);
-    }
 }
 
 export default AuthController;

@@ -1,4 +1,4 @@
-import { config } from "../../../../auth/app/src/config/env.config";
+import { config } from "../config/env.config.js";
 
 export class UserController
 {
@@ -33,8 +33,8 @@ export class UserController
     async updateUsername()
     {
         this.#readFromQueue(config.update_username_queue, async (user) => {
-            const newUsername = { username: user.new_username }
-            await this.userService.updateUser(user.username, newUsername);
+            const newusername = { username: user.newusername }
+            await this.userService.updateUser(user.username, newusername);
         });
     }
 

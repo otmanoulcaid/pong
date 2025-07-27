@@ -2,13 +2,13 @@ import Fastify from 'fastify'
 import plugins from './plugins/index.plugin.js'
 import { routes } from './routes/index.route.js'
 import printRoutes from 'fastify-print-routes';
-import { config } from './config/env.config.js';
+import dotenv from 'dotenv'
 
 export class Server
 {
     constructor()
     {
-        this.server = Fastify({ logger: true });
+        this.server = Fastify();
         this.config();
     }
     
@@ -23,15 +23,15 @@ export class Server
     {
         this.server.listen(
             {
-                port: config.port,
-                host: config.host,
+                port: process.env.PORT || 3000,
+                host: process.env.HOST || '0.0.0.0',
             },
             (err) => {
                 if (err) {
                     console.log(err);
                     process.exit(1);
                 }
-                console.log(`fastify server is running on port ${config.port}...`);
+                console.log(`fastify server is running on port ${3000}...`);
             }
         );
     }

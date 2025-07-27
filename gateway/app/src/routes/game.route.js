@@ -1,4 +1,4 @@
-import { config } from "../config/env.config.js";
+import { config } from '../config/env.config.js';
 
 export const game = async (fastify) => {
     const forward = (request, reply) => {

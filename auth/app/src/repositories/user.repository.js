@@ -1,4 +1,5 @@
-import config from '../config/env.config.js'
+import {config} from '../config/env.config.js'
+import AppError from '../utils/AppError.js';
 
 export class UserRepository 
 {
@@ -16,7 +17,7 @@ export class UserRepository
 
     async createUser(email, username, hashedPassword)
     {
-        const response = await this.#postFetch(`/internal/users`, {
+        const response = await this.#fetch('POST', `/internal/users`, {
             email,
             username,
             hashedPassword
@@ -24,19 +25,18 @@ export class UserRepository
         return response;
     }
 
-    async setPasswordByEmail (email, hashedPassword)
+    async verifyUser (username)
     {
-        const response = await this.#postFetch('/internal/users/password', {
-            email,
-            hashedPassword
+        const response = await this.#fetch('PUT', '/internal/users/state', {
+            username
         });
         return response;
     }
 
     async setAvatarurl(username, picture)
     {
-        const response = await this.#postFetch('/internal/users/avatar', {
-            email,
+        const response = await this.#fetch('POST' ,'/internal/users/avatar', {
+            username,
             picture
         });
         return response;
@@ -45,22 +45,36 @@ export class UserRepository
     async #getFetch(uri)
     {
         try {
-            const response = await fetch(config.servers.USER + uri)
-            return await response.json()
+            let response = await fetch(config.servers.user + uri)
+            
+            if (!response.ok)
+            {
+                let res = await response.json();
+                throw new AppError(res.message,res.statusCode)
+            }
+            response = await response.json()
+            return response
         } catch (error) {
-            return null;
+            throw error;
         }
     }
-    async #postFetch(uri, body)
+    
+    async #fetch(method, uri, body)
     {
         try {
-            const response = await fetch(config.servers.USER + uri, {
-                method: 'POST',
+            let response = await fetch(config.servers.user + uri, {
+                method,
                 body: JSON.stringify(body)
             });
-            return await response.json()
+            if (!response.ok)
+            {
+                let res = await response.json();
+                throw new AppError(res.message,res.statusCode)
+            }
+            response = await response.json()
+            return response
         } catch (error) {
-            return null;
+            throw error;
         }
     }
 }

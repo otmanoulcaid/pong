@@ -8,9 +8,6 @@ export default fp
 (
     async function registerPlugins (fastify)
     {
-        fastify.addHook('onRequest', async (req, res) => {
-            console.log('>>>> from User <<<< URI : ' + req.url);
-        })
 		await fastify.register(cors);
         await fastify.register (dbplugin);
         await fastify.register (amqpPlugin);
