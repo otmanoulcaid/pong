@@ -7,27 +7,30 @@ export class FriendService
 
     getAll(from)
     {
-        return this.friendRepository.findAll();
+        return this.friendRepository.findAll(from);
     }
 
     addFriend(friend)
     {
+        friend.stat = 'pending';
         this.friendRepository.insert(friend)
     }
 
     acceptFriend(friend)
     {
-        this.friendRepository.update(friend.from, friend.to, 'accepted');
+        friend.stat = 'accepted'
+        this.friendRepository.update(friend);
     }
-
+    
     blockFriend(friend)
     {
-        this.friendRepository.update(friend.from, friend.to, 'blocked');
+        friend.stat = 'blocked'
+        this.friendRepository.update(friend);
     }
 
     removeFriend(friend)
     {
-        this.friendRepository.delete(friend.from, friend.to)
+        this.friendRepository.delete(friend.u_from, friend.u_to)
     }
 
     isBlocked(from, to)

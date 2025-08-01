@@ -21,7 +21,7 @@ export class Server
         this.server.register(fastifyWebsocket);
         this.server.register(plugins);
         this.server.register(friend, { prefix: '/api/v1/friends' });
-        this.server.register(chat, { prefix: '/ws' });
+        this.server.register(chat, { prefix: '/ws/chat' });
     }
 
     start()
@@ -36,7 +36,7 @@ export class Server
                     console.error(err);
                     process.exit(1);
                 }
-                console.log(`fastify server is running on port ${config.port}...`);
+                console.log(`chat server is running on port ${config.port}...`);
             }
         );
     }

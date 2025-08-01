@@ -7,15 +7,22 @@ export class FriendRepository
 
     async insert(friend)
     {
-        const query = `INSERT INTO friends (u_from, u_to, status) VALUES (?, ?, ?)`;
-        const params = [friend.u_from, friend.u_to, friend.status];
+        const query = `INSERT INTO friends (u_from, u_to, stat) VALUES (?, ?, ?)`;
+        const params = [friend.u_from, friend.u_to, friend.stat];
         return this.db.prepare(query).run(params);
     }
 
-    async findAll()
-    {
-        const query = `SELECT * FROM friends`;
-        return this.db.prepare(query).all();
+    findAll(userid) {
+        const query = `
+            SELECT * FROM users
+            WHERE id IN (
+                SELECT u_to FROM friends WHERE u_from = ?
+                UNION
+                SELECT u_from FROM friends WHERE u_to = ?
+            )
+        `;
+        let friends = this.db.prepare(query).all([userid, userid]);
+        return friends;
     }
 
     async findOne(u_from, u_to)
@@ -25,10 +32,10 @@ export class FriendRepository
         return this.db.prepare(query).get(params);
     }
 
-    async update(u_from, u_to, stat)
+    async update(data)
     {
-        const query = `UPDATE friends SET status = ? WHERE u_from = ? AND u_to = ?`;
-        const params = [stat, u_from, u_to];
+        const query = `UPDATE friends SET stat = ? WHERE u_from = ? AND u_to = ?`;
+        const params = [data.stat, data.u_from, data.u_to];
         return this.db.prepare(query).run(params);
     }
 

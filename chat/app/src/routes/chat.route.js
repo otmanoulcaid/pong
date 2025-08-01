@@ -9,5 +9,5 @@ export const chat = (fastify) => {
     const chatService = new ChatService(new ChatRepository(fastify.db));
     const friendService = new FriendService(new FriendRepository(fastify.db));
     const chatController = new ChatController(chatService, friendService);
-    fastify.get('/chat/:username', { websocket: true }, chatController.manageConnection.bind(chatController));
+    fastify.get('/:username', { websocket: true }, chatController.manageConnection.bind(chatController));
 }
