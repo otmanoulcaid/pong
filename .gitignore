@@ -1,3 +1,8 @@
-**/.env
 **/node_modules/
-**/.vscode/
+.prettierrc
+.log
+**/.env
+.vscode/
+**/TODO
+env.sh
+.DS_Store
