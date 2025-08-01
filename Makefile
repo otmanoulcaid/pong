@@ -1,31 +1,33 @@
-DC = docker compose
+DC = docker-compose
 YAML_PATH = docker-compose.yml
 
-all : up
+all: up
 
-up :
+up:
+	@chmod +x env.sh && ./env.sh 2> /dev/null || true
 	@$(DC) -f $(YAML_PATH) up --build
 
-down :
+down:
 	@$(DC) down
 
-restart :
+restart:
 	@$(DC) restart
 
-stop :
+stop:
 	@$(DC) stop
 
-stats :
+stats:
 	@docker stats
 
 clean : stop
 	@docker image prune -f
 	@docker container prune -f
 	@docker network prune -f
+	@find . -type f \( -name "*.db" -o -name "*.sqlite" \) -delete
 
 fclean : clean
 	@docker volume prune -f
 
 re: fclean all
 
-.PHONY: up down restart stop stats
+.PHONY: up down stop stats restart
