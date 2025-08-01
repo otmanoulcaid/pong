@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq
@@ -23,7 +21,7 @@ services:
     image: gateway:1.0
     container_name: gateway
     ports:
-      - 3000:3000
+      - 4000:4000
     networks:
       - trance
     depends_on:
@@ -100,8 +98,27 @@ services:
     env_file:
       - ./game/app/.env
     volumes:
-      - ./chat/app/:/app
+      - ./game/app/:/app
       - /app/node_modules
+
+  notification:
+    build: notification
+    image: notification:1.0
+    container_name: notification
+    networks:
+      - trance
+    ports:
+      - 3005:3005
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./notification/app/.env
+    volumes:
+      - ./notification/app/:/app
+      - /app/node_modules
+
+
 
 networks:
   trance:
