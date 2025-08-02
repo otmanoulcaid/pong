@@ -2,8 +2,8 @@ import AppError from '../utils/AppError.js';
 import generateUserToken from '../utils/generateUserToken.js';
 import setTokenCookie from '../utils/setTokenCookie.js';
 import genrateRandomNum from '../utils/genrateRandomNum.js';
-import getVerifyHtml from '../utils/getVerifyHtml.js';
 import bcrypt from 'bcrypt';
+import { config } from '../config/env.config.js';
 
 
 class AuthService
@@ -22,34 +22,78 @@ class AuthService
             throw new AppError ('This user not found', 404);
         if (user.is_verified)
             throw new AppError ('This user is already verified', 409);
-        const record = await this.cache.get (`reset-code:${email}`);
-        if (record !== verificationCode.toString())
+        const record = await this.cache.get (email);
+        if (record != verificationCode)
             throw new AppError("this code is incorrect", 400);
-        await this.cache.del (`reset-code:${email}`);
         await this.userRopo.verifyUser (user.username);
+        await this.cache.del (email);
         return {success :true, message: "verification done successfully"};
     }
-    
-    async sendMail ({email})
+
+    async sendMail({email})
     {
         const user =  await this.userRopo.findUserByEmail(email);
         if (!user)
             throw new AppError ('This user not found', 404);
-        const verificationCode = genrateRandomNum (100_000, 1000_000);
-        const htmlMessage = await getVerifyHtml (verificationCode.toString());
-        await this.cache.set (`reset-code:${email}`, `${verificationCode.toString ()}`, 60 * 10);
-        this.fastify.mailer.sendMail ({to : email, html : htmlMessage});
-        return {success :true, message: "code resende done successfully"};
+        return this.#sendOtp(email);
+    }
+    
+    async #sendOtp (email)
+    {
+        const verificationCode = genrateRandomNum (100_000, 1_000_000);
+        await this.cache.set (email, verificationCode.toString (), 60 * 10);
+        await this.fastify.channel.assertQueue(config.notification_queue);
+        await this.fastify.channel.sendToQueue(config.notification_queue, Buffer.from(JSON.stringify ({
+                to : email,
+                subject: 'code verification',
+                body : verificationCode,
+                type: 'OTP'
+            }
+        )));
+
+        return {success :true, message: "code sent successfully"};
+    }
+    
+    async  verifyTwoFa ({email, verificationCode}, cookies, reply)
+    {
+        const user = await this.userRopo.findUserByEmail(email);
+        if (!user)
+            throw new AppError ('invalid credentials, please try again', 400);
+        if (!user.is_verified)
+            throw new AppError('Please verify your email before login.', 401);
+        const token = cookies.twoFaToken
+        if (!token)
+            throw new AppError('Please login before passing to 2FA process.', 403)
+        try {
+            const decode = this.fastify.jwt.decode(token)
+            if (user.username != decode.username || decode.email != user.email)
+                throw new AppError('invalid credentials', 401)
+        } catch (error) {
+            console.log(error);
+            throw new AppError('invalid credentials', 401)
+        }
+        const record = await this.cache.get (email);
+        if (record != verificationCode)
+            throw new AppError("this code is incorrect", 400);
+        await this.cache.del (email);
+        await this.fastify.jwt.destroy('twoFaToken')
+        const tokenAccess = await generateUserToken (this.fastify, user, '15m');
+        const tokenRefresh = await generateUserToken (this.fastify, user, '7d');
+        setTokenCookie (reply, tokenAccess, 'AccessToken', 15 * 60);
+        setTokenCookie (reply, tokenRefresh, 'RefreshToken', 7 * 24 * 60 * 60, '/api/v1/auth/refresh');
+        return {success :true, message: "verification done successfully"};
     }
 
     async signup ({email, username, password})
     {
         const hashedPassword =  await bcrypt.hash(password, 10); 
         await this.userRopo.createUser (email, username, hashedPassword);
-        this.sendMail ({email});
-        return {success :true};
+        const result = await this.#sendOtp (email);
+        result.username = username;
+        result.email = email;
+        return result;
     }
-    
+
     async login ({username, password}, reply)
     {
         const user = await this.userRopo.findUserByUsername(username);
@@ -57,23 +101,13 @@ class AuthService
             throw new AppError('Invalid credentials', 401);
         if (!user.is_verified)
             throw new AppError('Please verify your email before logging in.', 401);
-        const tokenAccess = await generateUserToken (this.fastify, user, '15m');
-        const tokenRefresh = await generateUserToken (this.fastify, user, '7d');
-        setTokenCookie (reply, tokenAccess, 'AccessToken', 15 * 60);
-        setTokenCookie (reply, tokenRefresh, 'RefreshToken', 7 * 24 * 60 * 60, '/auth/refresh');
-        return {success :true};
+        const twoFaToken = await generateUserToken (this.fastify, user, '10');
+        setTokenCookie (reply, twoFaToken, 'twoFaToken', 10 * 60, '/api/v1/auth/verify-2fa');
+        const result = await this.#sendOtp (user.email);
+        result.username = user.username;
+        result.email = user.email;
+        return result;
     }
-    
-    async  forgotPassword ({email})
-    { 
-        const user = await this.userRopo.findUserByEmail (email);
-        if (!user)
-            throw new AppError ("user doesnt exists", 404);
-        this.sendMail ({email});
-        return ({success : true});
-    }
-    
-   
 
     async refreshToken ({RefreshToken}, reply)
     {
@@ -84,9 +118,79 @@ class AuthService
     }
     async logout (reply)
     {
-         reply.clearCookie ('AccessToken');
-         reply.clearCookie ('RefreshToken');
-         return {success : true, message : "user logged out successfully."};
+        reply.clearCookie ('AccessToken');
+        reply.clearCookie ('RefreshToken');
+        reply.clearCookie ('LoginTokenSend');
+        return {success : true, message : "user logged out successfully."};
+    }
+
+    #generateToken(jwt)
+    {
+        let token = ''
+        let chars = jwt.split('')
+        let length = chars.length;
+        for(let i = 0; i < 30; i++)
+            token += chars[Math.floor(Math.random() * length)]
+        return token;
+    }
+    async  forgotPassword ({email})
+    {
+        const user = await this.userRopo.findUserByEmail (email);
+        if (!user)
+            throw new AppError ("user doesnt exists", 404);
+        const jwt = this.fastify.jwt.sign(
+            { id : user.id, username: user.username ,email: user.email },
+            { expiresIn: 10 * 60}
+        )
+        let token = this.#generateToken(jwt)
+        this.fastify.cache.set(token, jwt, 10 * 60)
+        await this.fastify.channel.assertQueue(config.notification_queue);
+        await this.fastify.channel.sendToQueue(config.notification_queue, Buffer.from(JSON.stringify({
+                to : email,
+                subject: 'reset your password',
+                body : `http://localhost:3000/auth/reset-password?token=${token}`,
+                type: 'OTT'
+            })
+        ));
+        return {
+            success :true,
+            email: user.email,
+            message: "an email is sent to you, please check your email box"
+        };
+    }
+
+    async validateResetToken(token, email)
+    {
+        const user = await this.userRopo.findUserByEmail (email);
+        if (!user)
+            throw new AppError ("user doesnt exists", 404);
+        const fullToken = await this.fastify.cache.get(token);
+        if (!fullToken)
+            throw new AppError('not a valid token', 400);
+        try {
+            const decode = await this.fastify.jwt.decode(fullToken);
+            if (decode.email != email)
+                throw new AppError('you are not allowed to change the password', 403);
+            return decode;
+        }
+        catch (error)
+        {
+            throw new AppError('not a valid token', 400);
+        }
+    }
+
+    async resetPassword(token, email, password)
+    {
+        try {
+            await this.validateResetToken(token, email);
+            await this.userRopo.resetPassword(email, password, token);
+        }
+        catch (error)
+        {
+            console.log('============================================================');
+            console.log(error);
+            console.log('============================================================');
+        }
     }
 }
 

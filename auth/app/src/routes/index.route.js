@@ -12,20 +12,29 @@ export const routes = async (fastify) =>
     const googleAuthService  = new GoogleAuthService(fastify, userRepo);
     const googleAuthController = new GoogleAuthController(googleAuthService);
 
+    fastify.addHook('onRequest', async (req, res) => {
+        console.log(req.cookies);
+    })
+    fastify.addHook('onResponse', async (req, res) => {
+        console.log(res.getHeaders());
+    })
+
     fastify.post ('/refresh', authController.refreshToken.bind (authController))
     fastify.post ('/signup' ,authController.signup.bind (authController))
     fastify.post ('/login', authController.login.bind (authController));
     fastify.post ('/logout', authController.logout.bind (authController));
 
     fastify.post ('/forgot-password', authController.forgotPassword.bind (authController));
+    fastify.post ('/validate-reset-token', authController.validateResetToken.bind (authController));
+    fastify.post ('/reset-password', authController.resetPassword.bind (authController));
 
     fastify.post ('/verify-user', authController.verifyUser.bind (authController));
     fastify.post ('/resend-code', authController.sendMail.bind (authController));
+
+    fastify.post ('/verify-2fa', authController.verifyTwoFa.bind (authController));
+    fastify.get('/test', (req, res) => {
+        return {test: 'test'}
+    })
     
     fastify.get ('/callback', googleAuthController.googleCallback.bind (googleAuthController));
-
-    // to be removed
-    fastify.get('/ping', (req, res)=>{
-        res.send({ping: 'pong'});
-    })
 }

@@ -1,9 +1,14 @@
 import fp from 'fastify-plugin'
 
+import pluginjwt from './jwt.plugin.js'
+import oAut from './google-auth.plugin.js'
+import  mqPlugin  from './amqp.plugin.js'
+import redisPlugin from './redis.plugin.js'
+
 export default fp(async (fastify) =>
 {
-    fastify.register(await import('./jwt.plugin.js'))
-    fastify.register(await import('./mailer.plugin.js'))
-    fastify.register(await import('./google-auth.plugin.js'))
-    fastify.register(await import('./redis.plugin.js'))
+    fastify.register(redisPlugin);
+    fastify.register(oAut);
+    fastify.register(pluginjwt);
+    await fastify.register(mqPlugin);
 });

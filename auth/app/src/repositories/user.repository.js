@@ -42,6 +42,16 @@ export class UserRepository
         return response;
     }
 
+    async resetPassword(email, newpassword, token)
+    {
+        const response = await this.#fetch('POST', '/api/v1/users/reset-password', {
+            email,
+            newpassword,
+            token
+        });
+        return response
+    }
+
     async #getFetch(uri)
     {
         try {
@@ -69,7 +79,7 @@ export class UserRepository
             if (!response.ok)
             {
                 let res = await response.json();
-                throw new AppError(res.message,res.statusCode)
+                throw new AppError(res.message, res.statusCode)
             }
             response = await response.json()
             return response

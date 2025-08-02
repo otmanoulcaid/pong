@@ -31,7 +31,7 @@ export class Server
                     console.error(err);
                     process.exit(1);
                 }
-                console.log(`fastify server is running on port ${config.port}...`);
+                console.log(`auth server is running on port ${config.port}...`);
             }
         );
     }

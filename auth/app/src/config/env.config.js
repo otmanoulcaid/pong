@@ -8,13 +8,12 @@ export const config = {
     redirect_uri : process.env.REDIRECT_URI,
     client_id : process.env.CLIENT_ID,
     client_secret : process.env.CLIENT_SECRET,
-
-    email_user : process.env.EMAIL_USER,
-    email_password : process.env.EMAIL_PASS ,
-    email_host : process.env.EMAIL_HOST,
+    
+    notification_queue: process.env.EMAIL_QUEUE,
 
     servers: {
         redis : process.env.REDIS_HOST || 'redis://localhost',
         user : process.env.USER_HOST || 'http://localhost:3002',
+        rabbitmq : process.env.RABBITMQ_HOST || 'amqp://localhost',
     },
 }

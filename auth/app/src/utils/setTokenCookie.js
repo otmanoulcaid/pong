@@ -1,7 +1,6 @@
 function setTokenCookie (reply, token, name, maxAge ,path = '/')
 {
-    reply.setCookie (name, token,
-    {
+    reply.setCookie (name, token, {
         path: path,
         secure: false,
         httpOnly: true,
