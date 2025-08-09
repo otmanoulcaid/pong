@@ -5,12 +5,10 @@ export class ChatRepository
         this.db = db
     }
 
-    insertMessage(message)
+    insertMessage({sender, reciever, content})
     {
-        const keys = Object.keys(message)
-        const values = keys.map(e => '?').join(', ')
-        const query = `INSERT INTO messages(${keys.join(', ')}) VALUES(${values})`
-        this.db.prepare(query).run(Object.values(message))
+        const query = `INSERT INTO messages(u_from, u_to, content) VALUES(?, ?, ?)`
+        this.db.prepare(query).run([sender, reciever, content])
     }
 
     findMessage(from)

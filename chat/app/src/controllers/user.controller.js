@@ -60,4 +60,9 @@ export class UserController
                 console.log('Consumer cancelled by server');
         });
     }
+
+    getUsersByKeyword(request, reply)
+    {
+        return this.userService.getUsersByKeyword(request.params);
+    }
 }

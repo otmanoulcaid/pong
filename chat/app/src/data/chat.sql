@@ -2,12 +2,6 @@
 -- DROP TABLE IF EXISTS friends;
 -- DROP TABLE IF EXISTS messages;
 
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    avatar_url TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     u_from TEXT NOT NULL,
@@ -18,15 +12,21 @@ CREATE TABLE IF NOT EXISTS messages (
     CHECK (stat IN ('d', 'u'))
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    avatar_url TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS friends (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    u_from INTEGER NOT NULL,
-    u_to INTEGER NOT NULL,
+    u_from TEXT NOT NULL,
+    u_to TEXT NOT NULL,
     stat TEXT NOT NULL,
 
     CHECK (stat IN ('pending', 'accepted', 'blocked')),
-    FOREIGN KEY (u_from) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (u_to) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (u_from) REFERENCES users(username) ON DELETE CASCADE,
+    FOREIGN KEY (u_to) REFERENCES users(username) ON DELETE CASCADE
 );
 
 DELETE FROM users WHERE true;
@@ -48,14 +48,18 @@ INSERT INTO users (id, username, avatar_url) VALUES
 
 
 INSERT INTO friends (u_from, u_to, stat) VALUES
-(7, 5, 'accepted'),
-(2, 5, 'accepted'),
-(10, 8, 'blocked'),
-(6, 10, 'blocked'),
-(8, 9, 'pending'),
-(9, 8, 'blocked'),
-(7, 6, 'pending'),
-(6, 5, 'blocked');
+('khalid', 'hamza', 'accepted'),
+('fatima', 'hamza', 'accepted'),
+('sara', 'imane', 'blocked'),
+('zineb', 'sara', 'accepted'),
+('reda', 'imane', 'accepted'),
+('khalid', 'zineb', 'pending'),
+('ayoub', 'sara', 'accepted'),
+('khalid', 'sara', 'accepted'),
+('fatima', 'zineb', 'pending'),
+('khalid', 'ayoub', 'accepted'),
+('sara', 'hamza', 'blocked');
+
 
 INSERT INTO messages (u_from, u_to, content, stat) VALUES
 ('imane', 'zineb', 'Hey zineb, this is imane!', 'd'),

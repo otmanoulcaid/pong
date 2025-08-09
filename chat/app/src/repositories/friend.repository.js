@@ -5,41 +5,46 @@ export class FriendRepository
         this.db = db;
     }
 
-    async insert(friend)
+    insert(friend)
     {
         const query = `INSERT INTO friends (u_from, u_to, stat) VALUES (?, ?, ?)`;
         const params = [friend.u_from, friend.u_to, friend.stat];
         return this.db.prepare(query).run(params);
     }
 
-    findAll(userid) {
+    findAll()
+    {
+        return this.db.prepare('SELECT * FROM friends').all();
+    }
+
+    findAllFriends(username) {
         const query = `
-            SELECT * FROM users
-            WHERE id IN (
-                SELECT u_to FROM friends WHERE u_from = ?
-                UNION
-                SELECT u_from FROM friends WHERE u_to = ?
-            )
+            SELECT u.username, u.avatar_url
+            FROM users u
+            JOIN friends f ON (u.username = f.u_from OR u.username = f.u_to)
+            WHERE (f.u_from = ? OR f.u_to = ?)
+                AND f.stat <> 'blocked'
+                AND u.username <> ?
         `;
-        let friends = this.db.prepare(query).all([userid, userid]);
+        let friends = this.db.prepare(query).all([username, username, username]);
         return friends;
     }
 
-    async findOne(u_from, u_to)
+    findOne(u_from, u_to)
     {
         const query = `SELECT * FROM friends WHERE u_from = ? AND u_to = ?`;
         const params = [u_from, u_to];
         return this.db.prepare(query).get(params);
     }
 
-    async update(data)
+    update(data)
     {
         const query = `UPDATE friends SET stat = ? WHERE u_from = ? AND u_to = ?`;
         const params = [data.stat, data.u_from, data.u_to];
         return this.db.prepare(query).run(params);
     }
 
-    async delete(u_from, u_to)
+    delete(u_from, u_to)
     {
         const query = `DELETE FROM friends WHERE u_from = ? OR u_to = ?`;
         const params = [u_from, u_to];

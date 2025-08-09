@@ -5,7 +5,8 @@ import { chat } from './routes/chat.route.js'
 import fastifyWebsocket from "@fastify/websocket";
 import printRoutes from 'fastify-print-routes';
 import { config } from './config/env.config.js';
-
+import cors from '@fastify/cors'
+import { users } from './routes/user.route.js';
 
 export class Server
 {
@@ -14,30 +15,44 @@ export class Server
         this.server = Fastify();
         this.config();
     }
-    
+
     config()
     {
+        this.server.register(cors, {
+            origin: "http://localhost:3000",
+            credentials: true,
+            methods: ['PUT', 'POST', 'GET', 'DELETE']
+        });
+        this.server.setErrorHandler((error, request, reply) => {
+            if (error.validation) {
+                const message = error.validation[0].message;
+        
+                return reply.status(400).send({
+                    statusCode: 400,
+                    error: "Bad Request",
+                    message,
+                });
+            }
+            reply.send(error);
+        });
         this.server.register(printRoutes);
         this.server.register(fastifyWebsocket);
         this.server.register(plugins);
         this.server.register(friend, { prefix: '/api/v1/friends' });
-        this.server.register(chat, { prefix: '/ws/chat' });
+        this.server.register(users, { prefix: '/api/v1/friends/u' });
+        this.server.register(chat, { prefix: '/ws/v1/chat' });
     }
 
     start()
     {
-        this.server.listen(
-            {
-                port: config.port,
-                host: config.host,
-            },
-            (err) => {
-                if (err) {
-                    console.error(err);
-                    process.exit(1);
-                }
-                console.log(`chat server is running on port ${config.port}...`);
-            }
-        );
+        this.server.listen({
+            port: config.port,
+            host: config.host,
+        })
+        .then(address => console.log(`chat server is running on ${address}...`))
+        .catch(err => {
+            console.error(err);
+            process.exit(1);
+        })
     }
 }

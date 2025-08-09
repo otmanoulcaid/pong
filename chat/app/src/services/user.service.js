@@ -29,8 +29,13 @@ export class UserService
         this.userRepository.insert(user);
     }
 
-    async updateUser(username, data)
+    updateUser(username, data)
     {
-        await this.userRepository.update({ username }, data);
+        this.userRepository.update({ username }, data);
+    }
+
+    getUsersByKeyword({ keyword })
+    {
+        return this.userRepository.findByKeyword(keyword)
     }
 }

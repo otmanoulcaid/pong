@@ -5,7 +5,7 @@ export class UserRepository
         this.db = db;
     }
 
-    async insert(data)
+    insert(data)
     {
         const columns = Object.keys(data).join(', ');
         const placeholders = Object.keys(data).map(() => '?').join(', ');
@@ -15,13 +15,13 @@ export class UserRepository
         return this.db.prepare(query).run(params);
     }
 
-    async findAll()
+    findAll()
     {
         const query = `SELECT * FROM users`;
         return this.db.prepare(query).all();
     }
 
-    async findOne(field)
+    findOne(field)
     {
         const column = Object.keys(field)[0];
         const value = field[column];
@@ -30,7 +30,7 @@ export class UserRepository
         return this.db.prepare(query).get(value);
     }
 
-    async update(field, data)
+    update(field, data)
     {
         const column = Object.keys(field)[0];
         const params = [...Object.values(data), field[column]];
@@ -40,7 +40,7 @@ export class UserRepository
         return this.db.prepare(query).run(params);
     }
 
-    async delete(field)
+    delete(field)
     {
         const column = Object.keys(field)[0];
         const value = field[column];
@@ -59,5 +59,15 @@ export class UserRepository
     createUser(username, avatar_url) 
     {
         return this.db.prepare('INSERT INTO users (username, avatar_url) VALUES (?, ?)').run(username, avatar_url);
+    }
+
+    findByKeyword(keyword)
+    {
+        return this.db.prepare(`
+            SELECT username, avatar_url
+            FROM Users
+            WHERE username LIKE ?`
+        )
+        .all([`%${keyword}%`])
     }
 }

@@ -13,44 +13,40 @@ export class FriendController
         reply.send({ friends })
     }
 
-    acceptFriend(request, reply)
+    async acceptFriend(request, reply)
     {
-        request.body = JSON.parse(request.body)
-        const {from, to} = request.body
-        this.friendService.acceptFriend({
+        const { from, to } = request.body
+        await this.friendService.acceptFriend({
             u_from: from,
             u_to: to
         })
         reply.send({ message: 'accepted successfully' })
     }
     
-    blockFriend(request, reply)
+    async blockFriend(request, reply)
     {
-        request.body = JSON.parse(request.body)
-        const {from, to} = request.body
-        this.friendService.blockFriend({
+        const { from, to } = request.body
+        await this.friendService.blockFriend({
             u_from: from,
             u_to: to
         })
         reply.send({ message: 'blocked successfully' })
     }
     
-    addFriend(request, reply)
+    async addFriend(request, reply)
     {
-        request.body = JSON.parse(request.body)
-        const {from, to} = request.body
-        this.friendService.addFriend({
+        const { from, to } = request.body
+        await this.friendService.addFriend({
             u_from: from,
             u_to: to
         })
         reply.send({ message: 'added successfully' })
     }
     
-    removeFriend(request, reply)
+    async removeFriend(request, reply)
     {
-        request.body = JSON.parse(request.body)
-        const {from, to} = request.body
-        this.friendService.removeFriend({
+        const { from, to } = request.body
+        await this.friendService.removeFriend({
             u_from: from,
             u_to: to
         })
