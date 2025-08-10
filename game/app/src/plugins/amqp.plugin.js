@@ -9,8 +9,7 @@ export default fp
         const connection = await amqplib.connect (config.servers.rabbitmq);
         const channel = await connection.createChannel ();
 
-        fastify.decorate ('mq', 
-        {
+        fastify.decorate ('mq', {
             connection,
             channel,
         })

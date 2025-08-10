@@ -1,18 +1,18 @@
 import fp from 'fastify-plugin';
-import dbplugin from './sqlite-db.plugins.js'
-import redisPlugin from './redis.plugin.js';
-import cors from '@fastify/cors';
-import amqpPlugin from './amqp.plugin.js';
+import dbplugin from './sqlite-db.plugins.js';
 import fastifyWebsocket from '@fastify/websocket';
-export default fp 
-(
-    async function registerPlugins (fastify)
-    {
-        await fastify.register(cors);
-		await fastify.register(fastifyWebsocket);
-        await fastify.register (dbplugin);
-        await fastify.register (redisPlugin);
-        await fastify.register (amqpPlugin);
+import redisPlugin from './redis.plugin.js';
+import amqpPlugin from './amqp.plugin.js';
+import userConsumers from '../mq/user.consumer.js';
+import friendConsumer from '../mq/friend.consumer.js';
+import publisherPlugin from './publisher.plugin.js';
 
-    }
-)
+export default fp(async function registerPlugins(fastify) {
+	await fastify.register(fastifyWebsocket);
+	await fastify.register(amqpPlugin);
+	await fastify.register(publisherPlugin);
+	await fastify.register(dbplugin);
+	await fastify.register(redisPlugin);
+	await userConsumers(fastify);
+	await friendConsumer(fastify);
+});
