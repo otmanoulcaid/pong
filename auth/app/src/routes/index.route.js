@@ -12,12 +12,16 @@ export const routes = async (fastify) =>
     const googleAuthService  = new GoogleAuthService(fastify, userRepo);
     const googleAuthController = new GoogleAuthController(googleAuthService);
 
-    fastify.addHook('onRequest', async (req, res) => {
-        console.log(req.cookies);
-    })
-    fastify.addHook('onResponse', async (req, res) => {
-        console.log(res.getHeaders());
-    })
+    // fastify.addHook('onRequest', async (req, res) => {
+    //     console.log('================== incoming cookies ==================');
+    //     console.log(req.cookies);
+    //     console.log('================== incoming cookies ==================');
+    // })
+    // fastify.addHook('onResponse', async (req, res) => {
+    //     console.log('================== outgoing headers ==================');
+    //     console.log(res.getHeaders());
+    //     console.log('================== outgoing headers ==================');
+    // })
 
     fastify.post ('/refresh', authController.refreshToken.bind (authController))
     fastify.post ('/signup' ,authController.signup.bind (authController))
@@ -25,7 +29,6 @@ export const routes = async (fastify) =>
     fastify.post ('/logout', authController.logout.bind (authController));
 
     fastify.post ('/forgot-password', authController.forgotPassword.bind (authController));
-    fastify.post ('/validate-reset-token', authController.validateResetToken.bind (authController));
     fastify.post ('/reset-password', authController.resetPassword.bind (authController));
 
     fastify.post ('/verify-user', authController.verifyUser.bind (authController));

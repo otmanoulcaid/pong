@@ -1,14 +1,12 @@
 import { config } from '../config/env.config.js'
 import fp from 'fastify-plugin'; 
 import fastifyJwt from '@fastify/jwt';
-import fastifyCookie from '@fastify/cookie';
 import AppError from '../utils/AppError.js';
 
 export default fp 
 (
     async (fastify) => 
     {
-        // await fastify.register (fastifyCookie);
         await fastify.register (fastifyJwt, 
         {
             secret : config.jwt_secret,

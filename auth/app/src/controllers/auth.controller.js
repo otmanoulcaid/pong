@@ -1,4 +1,4 @@
-class AuthController 
+class AuthController
 {
     constructor (authService)
     {
@@ -14,7 +14,7 @@ class AuthController
         const result = await this.authService.login (req.body, reply);
         reply.send (result);
     }
-    
+
     async refreshToken (req, reply)
     {
         const result = await this.authService.refreshToken (req.cookies, reply);
@@ -26,13 +26,13 @@ class AuthController
         const result = await this.authService.logout (reply);
         reply.send (result);
     }
-    
+
     async verifyUser (req, reply)
     {
-        const result = await this.authService.verifyUser (req.body);
+        const result = await this.authService.verifyUser (req.body, reply);
         reply.send (result);
     }
-    
+
     async sendMail (req, reply)
     {
         const result = await this.authService.sendMail (req.body);
@@ -50,22 +50,11 @@ class AuthController
         const result = await this.authService.forgotPassword (req.body);
         reply.send (result);
     }
-    
-    async validateResetToken (request, reply)
-    {
-        const { email, token } = request.body;
-        const respone = await this.authService.validateResetToken(token, email);
-        reply.send({
-            success: true,
-            mesage: 'token validated',
-            email: respone.email
-        });
-    }
 
     async resetPassword (request, reply)
     {
-        const {password, email, token} = request.body;
-        this.authService.resetPassword(token, email, password);
+        const {newPassword, repeatNewPassword, token} = request.body;
+        await this.authService.resetPassword(token, newPassword, repeatNewPassword);
         reply.send({
             success: true,
             message: 'password updated successfully'
@@ -74,3 +63,4 @@ class AuthController
 }
 
 export default AuthController;
+ 

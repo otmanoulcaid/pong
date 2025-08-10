@@ -11,17 +11,16 @@ class GoogleAuthService
     }
     async createUserGoogle (req, reply)
     {
-        const {token} = await this.fastify.googleOauth2.getAccessTokenFromAuthorizationCodeFlow (req);
+        const { token } = await this.fastify.googleOauth2.getAccessTokenFromAuthorizationCodeFlow (req);
         const userInfo = await this.fastify.googleOauth2.userinfo (token);
-        let user = this.userRepo.findUserByEmail(userInfo.email);
-        
+        let user = await this.userRepo.findUserByEmail(userInfo.email);
         if (!user)
         {
             const username = await generateUserName (userInfo.given_name, userInfo.family_name, this.fastify);
             this.userRepo.createUser (userInfo.email, username, "");
-            this.userRepo.setAvatarurl(username, userInfo.picture);
+            this.userRepo.updateAvatarurl(username, userInfo.picture);
             this.userRepo.verifyUser(username);
-            user = this.userRepo.findUserByUsername(username);
+            user = await this.userRepo.findUserByUsername(username);
         }
         const tokenAccess = await generateUserToken (this.fastify, user, '15m');
         const tokenRefresh = await generateUserToken (this.fastify, user, '7d');

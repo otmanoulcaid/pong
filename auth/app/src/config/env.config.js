@@ -9,7 +9,7 @@ export const config = {
     client_id : process.env.CLIENT_ID,
     client_secret : process.env.CLIENT_SECRET,
     
-    notification_queue: process.env.EMAIL_QUEUE,
+    notification_queue: process.env.NOTIF_QUEUE,
 
     servers: {
         redis : process.env.REDIS_HOST || 'redis://localhost',

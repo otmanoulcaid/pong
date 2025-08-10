@@ -5,13 +5,13 @@ export class UserRepository
 {
     async findUserByEmail(email)
     {
-        let user = this.#getFetch(`/internal/users/email/${email}`);
+        let user = await this.#getFetch(`/internal/users/email/${email}`);
         return user;
     }
 
     async findUserByUsername(username)
     {
-        let user = this.#getFetch(`/internal/users/username/${username}`);
+        let user = await this.#getFetch(`/internal/users/username/${username}`);
         return user;
     }
 
@@ -33,7 +33,7 @@ export class UserRepository
         return response;
     }
 
-    async setAvatarurl(username, picture)
+    async updateAvatarurl(username, picture)
     {
         const response = await this.#fetch('POST' ,'/internal/users/avatar', {
             username,
@@ -56,11 +56,11 @@ export class UserRepository
     {
         try {
             let response = await fetch(config.servers.user + uri)
-            
+
             if (!response.ok)
             {
                 let res = await response.json();
-                throw new AppError(res.message,res.statusCode)
+                throw new AppError(res.message, res.statusCode)
             }
             response = await response.json()
             return response

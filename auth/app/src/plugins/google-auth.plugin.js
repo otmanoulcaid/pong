@@ -6,7 +6,7 @@ export default fp
 (
     async (fastify) => 
     {
-
+            
         await fastify.register (fastifyOauth2, 
             {
                 name : 'googleOauth2',
@@ -23,7 +23,7 @@ export default fp
             discovery: {
             issuer: 'https://accounts.google.com'
             },
-            startRedirectPath: '/auth/google',
+            startRedirectPath: '/api/v1/auth/google',
             callbackUri : config.redirect_uri,
             callbackUriParams : 
             {
