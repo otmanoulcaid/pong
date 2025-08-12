@@ -42,12 +42,11 @@ export class UserRepository
         return response;
     }
 
-    async resetPassword(email, newpassword, token)
+    async resetPassword(email, newpassword)
     {
         const response = await this.#fetch('POST', '/api/v1/users/reset-password', {
             email,
-            newpassword,
-            token
+            newpassword
         });
         return response
     }

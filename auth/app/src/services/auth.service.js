@@ -190,7 +190,7 @@ class AuthService {
     }
     if (password != confirmPass)
       throw new AppError("the password should be the same", 400);
-    await this.userRopo.resetPassword(user.email, password, token);
+    await this.userRopo.resetPassword(user.email, password);
     this.fastify.cache.del(token);
   }
 }

@@ -53,7 +53,7 @@ class AuthController
 
     async resetPassword (request, reply)
     {
-        const {newPassword, repeatNewPassword, token} = request.body;
+        const { newPassword, repeatNewPassword, token } = request.body;
         await this.authService.resetPassword(token, newPassword, repeatNewPassword);
         reply.send({
             success: true,
