@@ -1,29 +1,48 @@
-const passwordHandler = {type: 'string', minLength : 8, maxLength: 20};
-const usernameHandler = {type: 'string', pattern : '^[a-zA-Z0-9_]+$', minLength : 4, maxLength: 20};
-
-export const avatarSchema =  
+const avatarSchema =  
 {
     type : 'object',
     required : ['filename', 'mimetype'],
-    properties : 
-    {
-        filename : {type : 'string'},
+    properties : {   filename : {type : 'string'},
         mimetype : {type : 'string', pattern : '^image/'},
     }
 };
 
-
-export const updateUsernameBioSchema = 
+export const updateBioSchema = 
 {
-        body : 
-        {
-            type : 'object',
-            properties : 
-            {
-                newusername : usernameHandler,
-                bio : {type : 'string' , maxLength : 200}
-            }
+    body : {
+        type : 'object',
+        required : ['bio'],
+        properties : {
+            bio : {type : 'string', maxLength : 200}
+        },
+        errorMessage : {
+            required : {
+                bio : 'bio is required',
+            },
+            properties : {
+                bio : 'username must be low than 200 character',
+            },
         }
+    },
+};
+
+export const updateUsernameSchema = 
+{
+    body : {
+        type : 'object',
+        required : ['newusername'],
+        properties : {
+            newusername : {type: 'string', pattern : '^[a-zA-Z0-9_]+$', minLength : 4, maxLength: 20},
+        },
+        errorMessage : {
+            required : {
+                newusername : 'username is required',
+            },
+            properties : {
+                newusername : 'username must be 4-20 characters and contain only letters, numbers, or underscores',
+            },
+        }
+    },
 };
 
 export const updatePasswordSchema = 
@@ -34,8 +53,19 @@ export const updatePasswordSchema =
             required : ['newpassword'],
             properties : 
             {
-                newpassword: passwordHandler,
+                newpassword: {type: 'string', minLength : 8, maxLength: 20}
             },
+            errorMessage : 
+            {
+                required : 
+                {
+                    newpassword : 'newpassword is required',   
+                },
+                properties : 
+                {
+                    newpassword :  'Password must be 8-20 characters long',
+                }
+            }
         }
 };
 
@@ -49,6 +79,7 @@ export const updataAvatarSchema =
         properties :
         {
                 avatar : avatarSchema,
-        }
+        },
+        errorMessage: 'Avatar must be a valid image file',
     }
 }

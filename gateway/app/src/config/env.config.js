@@ -1,4 +1,6 @@
 export const config = {
+    port: process.env.PORT || 4000,
+    host: process.env.HOST || '0.0.0.0',
     JWT_SECRET : process.env.JWT_SECRET || 'no_secret_for_dev',
     servers :
     {

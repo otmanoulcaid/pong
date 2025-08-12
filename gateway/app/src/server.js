@@ -1,38 +1,57 @@
-import Fastify from 'fastify'
-import plugins from './plugins/index.plugin.js'
-import { routes } from './routes/index.route.js'
-import printRoutes from 'fastify-print-routes';
-import dotenv from 'dotenv'
+import Fastify from "fastify";
+import plugins from "./plugins/index.plugin.js";
+import { routes } from "./routes/index.route.js";
+import printRoutes from "fastify-print-routes";
+import ajvErrors from "ajv-errors";
+import { config } from "./config/env.config.js";
+import cors from "@fastify/cors";
 
-export class Server
-{
-    constructor()
-    {
-        this.server = Fastify();
-        this.config();
-    }
-    
-    config()
-    {
-        this.server.register(printRoutes);
-        this.server.register(plugins);
-        this.server.register(routes, { prefix: '/api/v1' });
-    }
+export class Server {
+	constructor() {
+		this.server = Fastify({
+			exposeHeadRoutes: false,
+			ajv: {
+				plugins: [ajvErrors],
+				customOptions: {
+					allErrors: true,
+				},
+			},
+		});
+		this.config();
+	}
 
-    start()
-    {
-        this.server.listen(
-            {
-                port: process.env.PORT || 3000,
-                host: process.env.HOST || '0.0.0.0',
-            },
-            (err) => {
-                if (err) {
-                    console.log(err);
-                    process.exit(1);
-                }
-                console.log(`fastify server is running on port ${3000}...`);
-            }
-        );
-    }
+	config() {
+		this.server.register(cors, {
+			origin: "http://localhost:3000",
+			credentials: true,
+			methods: ['PUT', 'POST', 'GET', 'DELETE']
+		});
+		this.server.setErrorHandler((error, request, reply) => {
+			if (error.validation) {
+				const message = error.validation[0].message;
+				return reply.status(400).send({
+					statusCode: 400,
+					error: "Bad Request",
+					message,
+				});
+			}
+			reply.send(error);
+		});
+		this.server.register(printRoutes);
+		this.server.register(plugins);
+		this.server.register(routes, { prefix: "/api/v1" });
+	}
+
+	start()
+	{
+		this.server.listen({
+			port: config.port,
+			host: config.host,
+		})
+		.then(address => console.log(`gateway server is running on ${address}...`))
+		.catch(err => {
+			console.error(err);
+			process.exit(1);
+		})
+  	}
 }
