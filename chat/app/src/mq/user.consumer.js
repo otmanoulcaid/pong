@@ -13,9 +13,9 @@ async function setupUserConsumers(fastify) {
             if (data.type === 'CREATE_USER')
                 users_db.createUser(data.username, data.avatar_url);
             else if (data.type === 'UPDATE_USERNAME')
-                users_db.setUsername(data.username, data.newusername);
+                users_db.updateUsername(data.username, data.newusername);
             else if (data.type === 'UPDATE_AVATAR')
-                users_db.setAvatarurl(data.username, data.avatar_url);
+                users_db.updateAvatarurl(data.username, data.avatar_url);
             channel.ack(msg);
         }
         catch (err) {}

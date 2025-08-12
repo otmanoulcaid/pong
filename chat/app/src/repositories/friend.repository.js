@@ -32,8 +32,8 @@ export class FriendRepository
 
     findOne(u_from, u_to)
     {
-        const query = `SELECT * FROM friends WHERE u_from = ? AND u_to = ?`;
-        const params = [u_from, u_to];
+        const query = `SELECT * FROM friends WHERE (u_from = ? AND u_to = ?) OR (u_from = ? AND u_to = ?)`;
+        const params = [u_from, u_to, u_to, u_from];
         return this.db.prepare(query).get(params);
     }
 

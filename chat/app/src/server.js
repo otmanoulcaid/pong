@@ -12,7 +12,7 @@ export class Server
 {
     constructor()
     {
-        this.server = Fastify();
+        this.server = Fastify({ exposeHeadRoutes: false });
         this.config();
     }
 

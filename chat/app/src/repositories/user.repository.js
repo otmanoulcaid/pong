@@ -48,11 +48,11 @@ export class UserRepository
         return this.db.prepare(query).run(value);
     }
 
-    setUsername(username, newusername) 
+    updateUsername(username, newusername) 
     {
         return this.db.prepare('UPDATE users SET username=?  WHERE username = ?').run(newusername, username);
     }
-    setAvatarurl(username, avatarUrl) 
+    updateAvatarurl(username, avatarUrl) 
     {
         return this.db.prepare('UPDATE users SET avatar_url=?  WHERE username = ?').run(avatarUrl, username);
     }
