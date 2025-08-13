@@ -1,0 +1,11 @@
+import { config } from "../config/env.config.js";
+
+export const friendPublisher = async (fastify, data) => {
+    await fastify.mq.channel.assertQueue(config.friend_queue);
+    await fastify.mq.channel.sendToQueue(
+        config.friend_queue,
+        Buffer.from(
+            JSON.stringify (data)
+        )
+    );
+}
