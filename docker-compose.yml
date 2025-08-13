@@ -16,12 +16,28 @@ services:
     networks:
       - trance
 
+  nginx:
+    build: nginx
+    image: nginx:1.0
+    container_name: nginx
+    networks:
+      - trance
+    ports:
+      - 80:80
+    env_file:
+      - ./nginx/.env
+    volumes:
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      gateway:
+        condition: service_started
+
   gateway:
     build: gateway
     image: gateway:1.0
     container_name: gateway
-    ports:
-      - 4000:4000
+    # ports:
+    #   - 4000:4000
     networks:
       - trance
     depends_on:
@@ -37,8 +53,8 @@ services:
     build: auth
     image: auth:1.0
     container_name: auth
-    ports:
-      - 3001:3001
+    # ports:
+    #   - 3001:3001
     networks:
       - trance
     depends_on:
@@ -56,8 +72,8 @@ services:
     container_name: user
     networks:
       - trance
-    ports:
-      - 3002:3002
+    # ports:
+    #   - 3002:3002
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -67,14 +83,31 @@ services:
       - ./user/app/:/app
       - /app/node_modules
 
+  friend:
+    build: friend
+    image: friend:1.0
+    container_name: friend
+    networks:
+      - trance
+    # ports:
+    #   - 3006:3006
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./friend/app/.env
+    volumes:
+      - ./friend/app/:/app
+      - /app/node_modules
+
   chat:
     build: chat
     image: chat:1.0
     container_name: chat
     networks:
       - trance
-    ports:
-      - 3003:3003
+    # ports:
+    #   - 3003:3003
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -90,8 +123,8 @@ services:
     container_name: game
     networks:
       - trance
-    ports:
-      - 3004:3004
+    # ports:
+    #   - 3004:3004
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -107,8 +140,8 @@ services:
     container_name: notification
     networks:
       - trance
-    ports:
-      - 3005:3005
+    # ports:
+    #   - 3005:3005
     depends_on:
       rabbitmq:
         condition: service_healthy
