@@ -6,10 +6,8 @@ import { UserRepository } from "../repositories/user.repository.js"
 
 export const friend = ( fastify ) =>
 {
-    const userRepo = new UserRepository(fastify.db)
-    const userService = new UserService(userRepo)
     const friendRepository = new FriendRepository(fastify.db)
-    const friendService = new FriendService(fastify, friendRepository, userService);
+    const friendService = new FriendService(fastify, friendRepository);
     const friendController = new FriendController(friendService)
 
     fastify.get('/:username', friendController.getAllFriends.bind(friendController));
@@ -17,9 +15,4 @@ export const friend = ( fastify ) =>
     fastify.put('/accept', friendController.acceptFriend.bind(friendController));
     fastify.put('/block', friendController.blockFriend.bind(friendController));
     fastify.delete('/remove', friendController.removeFriend.bind(friendController));
-    
-    // to be removed
-    fastify.get('/ping', (req, res)=>{
-        res.send({ping: 'pong'});
-    })
 }

@@ -1,3 +1,5 @@
+import { config } from "../config/env.config.js";
+
 export class FriendRepository
 {
     constructor(db)
@@ -30,13 +32,6 @@ export class FriendRepository
         return friends;
     }
 
-    findOne(u_from, u_to)
-    {
-        const query = `SELECT * FROM friends WHERE (u_from = ? AND u_to = ?) OR (u_from = ? AND u_to = ?)`;
-        const params = [u_from, u_to, u_to, u_from];
-        return this.db.prepare(query).get(params);
-    }
-
     update(data)
     {
         const query = `UPDATE friends SET stat = ? WHERE u_from = ? AND u_to = ?`;
@@ -49,5 +44,17 @@ export class FriendRepository
         const query = `DELETE FROM friends WHERE u_from = ? OR u_to = ?`;
         const params = [u_from, u_to];
         return this.db.prepare(query).run(params);
+    }
+
+    async findFriendShip(u_from, u_to)
+    {
+        const response = await fetch(`${config.servers.friend}/internal/friends?from=${u_from}&to=${u_to}`);
+        return await response.json();
+    }
+
+    async getUserByUsername(username)
+    {
+        const response = await fetch(`${config.servers.friend}/internal/users/${username}`);
+        return await response.json();
     }
 }
