@@ -18,9 +18,10 @@ export class UserController
         return this.userService.getUserById({ id })
     }
 
-    getUserByUsername(username)
+    getUserByUsername(request, reply)
     {
-        return this.userService.getUserByUsername({ username })
+        const user =  this.userService.getUserByUsername(request.params);
+        reply.send(user);
     }
 
     async addUser()

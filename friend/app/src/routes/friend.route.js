@@ -14,6 +14,7 @@ export const friend = ( fastify ) =>
 
     fastify.get('/:username', friendController.allFriends.bind(friendController));
     fastify.post('/add', friendController.addFriend.bind(friendController));
+    fastify.post('/check', friendController.check.bind(friendController));
     fastify.put('/accept', friendController.acceptFriend.bind(friendController));
     fastify.put('/block', friendController.blockFriend.bind(friendController));
     fastify.delete('/remove', friendController.removeFriend.bind(friendController));

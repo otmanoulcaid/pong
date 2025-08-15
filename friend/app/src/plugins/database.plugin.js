@@ -1,17 +1,15 @@
 import fp from 'fastify-plugin';
-import fs from 'fs';
 import Database from 'better-sqlite3';
-import { fileURLToPath } from 'url';
-import {UserRepository} from '../repositories/user.repository.js';
+import { config } from '../config/env.config.js';
+import { friendSql } from '../data/friend.sql.js';
+import { UserRepository } from '../repositories/user.repository.js';
 
 export default fp(async (fastify) => {
-    const chatSchema = await fs.promises.readFile(new URL('../data/friend.sql', import.meta.url), 'utf-8');    
-    const databasePath = fileURLToPath(new URL('../data/friend.sqlite', import.meta.url));
-    const db = new Database(databasePath);
+    const db = new Database(config.db);
     const userRepo = new UserRepository (db);
 
     try {
-        db.exec(chatSchema);
+        db.exec(friendSql);
     } catch (error) {
         console.error('Error executing database schemas:', error);
     }

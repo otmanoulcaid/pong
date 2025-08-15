@@ -7,20 +7,43 @@ export class FriendController
 
     allFriends(request, reply)
     {
-        const from = request.params.username;
+        const from = request.headers['x-auth-user'];
         const friends = this.friendService.getAllFriends(from);
-        reply.send({ friends })
+        reply.send(friends)
     }
 
     friendship(request, reply)
     {
-        const friend = this.friendService.getFriendship(request.query);
-        reply.send({ friend })
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
+        const friend = this.friendService.getFriendship({from, to});
+        reply.send({ friend });
+    }
+
+    async check(request, reply)
+    {
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
+        const result = this.friendService.check({ from, to });
+        reply.send(result)
+    }
+    
+    async addFriend(request, reply)
+    {
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
+        console.log({from, to});
+        await this.friendService.addFriend({
+            u_from: from,
+            u_to: to
+        })
+        reply.send({ message: 'added successfully' })
     }
 
     async acceptFriend(request, reply)
     {
-        const { from, to } = request.body
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
         await this.friendService.acceptFriend({
             u_from: from,
             u_to: to
@@ -30,7 +53,8 @@ export class FriendController
 
     async blockFriend(request, reply)
     {
-        const { from, to } = request.body
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
         await this.friendService.blockFriend({
             u_from: from,
             u_to: to
@@ -38,19 +62,10 @@ export class FriendController
         reply.send({ message: 'blocked successfully' })
     }
 
-    async addFriend(request, reply)
-    {
-        const { from, to } = request.body
-        await this.friendService.addFriend({
-            u_from: from,
-            u_to: to
-        })
-        reply.send({ message: 'added successfully' })
-    }
-
     async removeFriend(request, reply)
     {
-        const { from, to } = request.body
+        const from = request.headers['x-auth-user'];
+        const to = request.body.to;
         await this.friendService.removeFriend({
             u_from: from,
             u_to: to

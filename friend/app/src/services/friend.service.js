@@ -20,9 +20,16 @@ export class FriendService
         return this.friendRepository.findOne(from, to);
     }
 
+    check({ from, to })
+    {
+        const friend = this.friendRepository.findOne(from, to);
+        console.log(friend);
+        return { success: friend.length != 0 && friend[0]?.stat === 'accepted' }
+    }
+
     async addFriend(friend)
     {
-        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)
+        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)[0]
         if (friendship) {
             if (friendship.stat == 'pending')
                 throw new AppError(`you alreay add this user`, 400);
@@ -33,15 +40,18 @@ export class FriendService
         }
         friend.stat = 'pending';
         this.friendRepository.insert(friend)
+        console.log(friend);
         const userFrom = this.userService.getUserByUsername(friend.u_from);
         const userTo = this.userService.getUserByUsername(friend.u_to)
+        console.log(userFrom);
+        console.log(userTo);
         await notificationPublisher (this.fastify, {
             service: 'friend',
             content : {
-                event: 'request',
-                sender: userFrom.username,
-                reciever: userTo.username,
-                senderAvatarUrl: userFrom.avatar_url,
+                event: 'REQUEST',
+                sender: userFrom?.username,
+                receiver: userTo?.username,
+                senderAvatarUrl: userFrom?.avatar_url,
                 date: new Date().toISOString()
             }
         });
@@ -51,7 +61,7 @@ export class FriendService
     {
         const userFrom = this.userService.getUserByUsername(friend.u_from);
         const userTo = this.userService.getUserByUsername(friend.u_to);
-        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)
+        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)[0]
         if (!friendship)
             throw new AppError(`that user did not send to you a friend request`, 400);
         if (friendship.stat == 'blocked')
@@ -63,9 +73,9 @@ export class FriendService
         await notificationPublisher (this.fastify, {
             service: 'friend',
             content : {
-                event: 'accept',
+                event: 'ACCEPT',
                 sender: userFrom.username,
-                reciever: userTo.username,
+                receiver: userTo.username,
                 senderAvatarUrl: userFrom.avatar_url,
                 date: new Date().toISOString()
             }
@@ -79,6 +89,11 @@ export class FriendService
 
     async blockFriend(friend)
     {
+        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)[0]
+        if (!friendship)
+            throw new AppError(`you are not friends`, 400);
+        if (friendship.stat === 'blocked')
+            throw new AppError(`you already block this friend`, 400);
         friend.stat = 'blocked'
         this.friendRepository.update(friend);
         const userTo = this.userService.getUserByUsername(friend.u_to);
@@ -92,9 +107,12 @@ export class FriendService
 
     async removeFriend(friend)
     {
-        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)
+        const friendship = this.friendRepository.findOne(friend.u_from, friend.u_to)[0]
+        console.log(friendship);
         if (!friendship)
             throw new AppError(`you are not friends`, 400);
+        if (friendship.stat === 'blocked')
+            throw new AppError(`you can not remove blocked friend`, 400);
         this.friendRepository.delete(friend.u_from, friend.u_to)
         const userTo = this.userService.getUserByUsername(friend.u_to);
         const userFrom = this.userService.getUserByUsername(friend.u_from)

@@ -19,7 +19,7 @@ export class FriendRepository
 
     findAllFriends(username) {
         const query = `
-            SELECT u.username, u.avatar_url
+            SELECT u.username, u.avatar_url, f.stat
             FROM users u
             JOIN friends f ON (u.username = f.u_from OR u.username = f.u_to)
             WHERE (f.u_from = ? OR f.u_to = ?)
@@ -32,7 +32,6 @@ export class FriendRepository
 
     findOne(u_from, u_to)
     {
-        console.log(u_from, u_to);
         const query = `SELECT * FROM friends WHERE (u_from = ? AND u_to = ?) OR (u_from = ? AND u_to = ?)`;
         const params = [u_from, u_to, u_to, u_from];
         return this.db.prepare(query).all(params);

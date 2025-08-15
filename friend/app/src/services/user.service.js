@@ -15,7 +15,7 @@ export class UserService
         return this.userRepository.findOne({ id });
     }
 
-    getUserByUsername(username)
+    getUserByUsername( username )
     {
         return this.userRepository.findOne({ username });
     }
