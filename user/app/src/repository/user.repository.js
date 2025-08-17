@@ -24,31 +24,38 @@ class UserRepository
     {
         return this.db.prepare('SELECT * FROM users WHERE id = ?').get(id);
     }
-    setPasswordByEmail (email , newPassword)
+    updatePasswordByEmail (email , newPassword)
     {
         return this.db.prepare ('UPDATE users SET password=? WHERE email = ?').run(newPassword, email);
     }
 
-    setPasswordByUsername (username , newPassword)
+    updatePasswordByUsername (username , newPassword)
     {
         return this.db.prepare ('UPDATE users SET password=? WHERE username = ?').run(newPassword, username);
     }
 
-    setUsername (username, newusername)
+    updateUsername (username, newusername)
     {    
         return this.db.prepare('UPDATE users SET username=?  WHERE username = ?').run(newusername, username);
     }
-    setAvatarurl(username, avatarUrl) 
-    {
-        return this.db.prepare('UPDATE users SET avatar_url=?  WHERE username = ?').run(avatarUrl, username);
-    }
-    setBio(username, bio) 
+
+    updateBio(username, bio) 
     {
         return this.db.prepare('UPDATE users SET bio=?  WHERE username = ?').run(bio, username);
     }
+
+    updateAvatarurl(username, avatarUrl) 
+    {
+        return this.db.prepare('UPDATE users SET avatar_url=?  WHERE username = ?').run(avatarUrl, username);
+    }
+
     verifyUser (username)
     {
         return this.db.prepare('UPDATE users SET is_verified=TRUE WHERE username=?').run(username);
+    }
+
+    deleteByUsername (username) {
+        return this.db.prepare('DELETE FROM Users WHERE username = ?').run([ username ]);
     }
 };
 

@@ -11,11 +11,12 @@ class UserService
         this.userRepo = userRepo;
     }
 
-    async getUserProfile ({username})
+    async getUserProfile ({ username })
     {
         const user =  this.userRepo.findUserByUsername (username);
-        const userProfile = 
-        {
+        if (!user)
+            throw new AppError('user not found', 404)
+        const userProfile = {
             username : user.username,
             email: user.email,
             bio : user.bio,
@@ -25,57 +26,62 @@ class UserService
         return userProfile;
     }
 
-    async updateUsernameBio ({username} , newusername , bio)
+    async updateUsername ({ username } , newusername)
     {
-        let user = this.userRepo.findUserByUsername (username); // tmp
+        let user = this.userRepo.findUserByUsername (username);
         if (!user)
-            throw new AppError ('this username not found', 404);
-        if (!newusername && !bio)
-            return {success : true, message : 'No changes were made to your profile.'};
-        if (newusername)
-        {
-            let user = this.userRepo.findUserByUsername (newusername);
-            if (user)
-                throw new AppError ('this username already exists', 409);
-            this.userRepo.setUsername (username, newusername);
-            await sendMessage (this.fastify.mq.channel, 
-            {
-                type : 'UPDATE_USERNAME',
-                username,
-                newusername,
-            })
-            username = newusername;
-        }
-        if (bio)
-        {
-                const toAdd = bio.trim(); 
-                if (toAdd.length > 200)
-                    throw new AppError ('this bio is too long', 400);
-                this.userRepo.setBio (username,toAdd);
-        }
+            throw new AppError ('user not exist', 404);
+        user = this.userRepo.findUserByUsername (newusername);
+        if (user)
+            throw new AppError ('this username already exists', 409);
+        this.userRepo.updateUsername (username, newusername);
+        await sendMessage (this.fastify.mq.channel, {
+            type : 'UPDATE_USERNAME',
+            username,
+            newusername,
+        })
         return {success : true, message : 'User profile updated successfully.'};
     }
     
-    async updataPassword ({username}, {newpassword})
+    async updateBio ({ username }, bio)
     {
-        const hashedPassword =  await bcrypt.hash(newpassword, 10);
-        this.userRepo.setPasswordByUsername (username, hashedPassword);
-        return {success : true, message : 'user profile updated'};
+        let user = this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError('user not exist', 404)
+        const toAdd = bio.trim(); 
+        if (!toAdd)
+            throw new AppError ('not a valid bio content', 400);
+        this.userRepo.updateBio (username, toAdd);
+        return {success : true, message : 'User profile updated successfully.'};
     }
     
-    async updateAvatar ({username}, {avatar})
+    async updatePassword ({ username }, { newpassword })
     {
+        let user = this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError ('user not exist', 404);
+        const hashedPassword =  await bcrypt.hash(newpassword, 10);
+        this.userRepo.updatePasswordByUsername (username, hashedPassword);
+        return {success : true, message : 'User profile updated successfully.'};
+    }
+    
+    async updateAvatar ({ username }, avatar)
+    {
+        let user = this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError ('user not exist', 404);
+        if (!avatar)
+                throw new AppError ('Must send image file', 400)
         const avatar_url = await uploadFile (username, avatar);
-        this.userRepo.setAvatarurl (username, avatar_url);
-        await sendMessage (this.fastify.mq.channel, 
-        {
+        this.userRepo.updateAvatarurl (username, avatar_url);
+        await sendMessage (this.fastify.mq.channel, {
             type : 'UPDATE_AVATAR' ,
             username,
             avatar_url
         })
         return {success : true, message : 'your avatar updated'};
     }
-    
+
     // ------------------------------ this internal endpoint ----------------------------
     async createUser ({email, username, hashedPassword})
     {
@@ -92,17 +98,27 @@ class UserService
 
     async  verifyUser ({username})
     {
-        this.userRepo.verifyUser (username);
         const user = this.userRepo.findUserByUsername(username);
+        if (!user)
+            throw new AppError ("User not Found", 404);
+        this.userRepo.verifyUser (username);
+        if (!user.avatar_url)
+        {
+            user.avatar_url = getDefaultAvatar ();
+            await this.userRepo.updateAvatarurl (username, user.avatar_url);
+        }
         await sendMessage (this.fastify.mq.channel, 
-            {type : 'CREATE_USER' , username : user.username, avatar_url : user.avatar_url}
+            {type : 'CREATE_USER' , username : user.username, avatar_url: user.avatar_url}
         )
         return {success : true, message : 'this user is verified successfully'};
     }
 
-    async   setAvatarurl ({username, avatar_url})
+    async   updateAvatarurl ({username, avatar_url})
     {
-        this.userRepo. setAvatarurl (username, avatar_url);
+        const user =  this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError ("User not Found", 404);
+        this.userRepo. updateAvatarurl (username, avatar_url);
         
         return {success : true, message : 'this user set avatar_url'};
     }
@@ -110,25 +126,37 @@ class UserService
     async findUserByUsername ({username})
     {
         const user =  this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError ("User not Found", 404);
         return user;
     }
     async findUserByEmail ({email})
     {
         const user =  this.userRepo.findUserByEmail (email);
+        if (!user)
+            throw new AppError ("User not Found", 404);
         return user;
     }
-
+    
     // ----------------------------- added ------------
-
-    async resetPassword ({email, verificationCode, newpassword})
+    
+    async resetPassword ({email, newpassword})
     {
-        const record = await this.cache.get (`reset-code:${email}`);
-        if (record !== verificationCode.toString())
-            throw new AppError ("Verification code is incorrect", 400);
+        const user =  this.userRepo.findUserByEmail (email);
+        if (!user)
+            throw new AppError ("User not Found", 404);
         const hashedPassword = await bcrypt.hash (newpassword, 10);
-        this.userRepo.setPasswordByEmail (email, hashedPassword);
-        await this.cache.del (`reset-code:${email}`);
+        this.userRepo.updatePasswordByEmail (email, hashedPassword);
         return ({success : true, massage : "the user is update password successfully"});
+    }
+    
+    async deleteAccount ({ username })
+    {
+        const user =  this.userRepo.findUserByUsername (username);
+        if (!user)
+            throw new AppError ("User not Found", 404);
+        this.userRepo.deleteByUsername (username);
+        return ({success : true, massage : "the user deleted successfully"});
     }
 
     async completeProfile (bio, avatar, username)
@@ -143,21 +171,10 @@ class UserService
         {
             const avatar_url = await  uploadFile (username, avatar);
             updatedFields.push('avatar');
-            await this.userRepo.setAvatarurl (username, avatar_url);
+            await this.userRepo.updateAvatarurl (username, avatar_url);
             await sendMessage (this.fastify.mq.channel, 
             {   
                 type : 'UPDATE_AVATAR',
-                username,
-                avatar_url,
-            })
-        }
-        else
-        {
-            const avatar_url = getDefaultAvatar ();
-            await this.userRepo.setAvatarurl (username, avatar_url);
-            await sendMessage (this.fastify.mq.channel, 
-            {   
-                type : 'UPDATE_AVATAR' ,
                 username,
                 avatar_url,
             })
@@ -166,7 +183,7 @@ class UserService
         {
             if (bio.trim().length > 200)
                 throw new AppError ('Bio is too long (max 200 characters)', 400);
-            this.userRepo.setBio (username, bio.trim());
+            this.userRepo.updateBio (username, bio.trim());
             updatedFields.push('bio');
         }
         const message = `User updated ${updatedFields.join(' and ')} successfully`;

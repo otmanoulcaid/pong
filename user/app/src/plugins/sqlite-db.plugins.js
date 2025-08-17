@@ -17,7 +17,7 @@ export default fp
 
         db.exec (queries);
         fastify.decorate ('db', db);
-        fastify.decorate ('users_db', userRepo);
+        fastify.decorate ('users_repo', userRepo);
 
     }  
 )

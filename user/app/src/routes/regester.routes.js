@@ -1,10 +1,8 @@
-import userRoute from './user.route.js';
-import fp from 'fastify-plugin';
+import apiUserRoute from './user.route.js';
+import internalUserRoute from './internal.route.js';
 
-export default fp
-(
-    (fastify) =>
-    {
-        fastify.register (userRoute);
-    }
-)
+export default (fastify) =>
+{
+    fastify.register (apiUserRoute, { prefix: '/api/v1/users' });
+    fastify.register (internalUserRoute, { prefix: '/internal/users' });
+}
