@@ -2,8 +2,9 @@ const config =
 {
     host: process.env.HOST || '0.0.0.0',
     port : process.env.PORT || 3005,
+    db: process.env.DB_PATH || '/app/src/data/notification.sqlite',
 
-    queue : process.env.EMAIL_QUEUE || 'email_queue',
+    notification_queue: process.env.NOTIF_QUEUE || 'notification_queue',
 
     mailer: {
         email: process.env.EMAIL_USER,

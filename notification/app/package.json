@@ -15,6 +15,9 @@
     "amqplib": "^0.10.8",
     "dotenv": "^17.2.1",
     "fastify": "^5.4.0",
+    "fastify-metrics": "^12.1.0",
+		"better-sqlite3": "^12.2.0",
+    "@fastify/websocket": "^11.2.0",
     "fastify-mailer": "^2.3.1",
     "fastify-plugin": "^5.0.1"
   },
