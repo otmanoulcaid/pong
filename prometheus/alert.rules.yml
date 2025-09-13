@@ -1,0 +1,23 @@
+groups:
+  - name: ServiceAvailability
+    interval: 1m
+    rules:
+      - alert: ServiceDown
+        expr: up == 0 or absent(dockerstats_cpu_usage_ratio{name="nginx"}) or absent(dockerstats_cpu_usage_ratio{name="rabbitmq"}) or absent(dockerstats_cpu_usage_ratio{name="redis"})
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} on {{ $labels.instance }} is down"
+
+  - name: ContainerMemoryUsage
+    interval: 1m
+    rules:
+      - alert: HighContainerMemoryUsage
+        expr: (dockerstats_memory_usage_ratio / dockerstats_memory_limit_bytes) * 100 > 50
+        for: 1m
+        labels: 
+          severity: critical
+          container: "{{ $labels.name }}"
+        annotations:
+          summary: "Container {{ $labels.name }} is using more than 50% of its memory limit (current: {{ $value }}%)"
